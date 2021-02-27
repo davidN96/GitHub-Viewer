@@ -5,11 +5,13 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@commitlint/cli": "^12.0.1",
+    "@commitlint/config-conventional": "^12.0.1",
     "core-js": "^3.6.5",
+    "husky": "^4.3.8",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^9.1.2",
@@ -36,5 +38,10 @@
     "sass-loader": "^8.0.2",
     "typescript": "~3.9.3",
     "vue-template-compiler": "^2.6.11"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "npx commitlint --edit $1"
+    }
   }
 }
