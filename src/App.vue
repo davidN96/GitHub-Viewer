@@ -1,14 +1,17 @@
 <template>
   <div id="app">
-    <i class="fab fa-github"></i>
+    <TopBar />
     <router-view />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import TopBar from '@/components/TopBar/index.vue';
 
-@Component
+@Component({
+  components: { TopBar },
+})
 export default class App extends Vue {}
 </script>
 
