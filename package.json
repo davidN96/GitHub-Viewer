@@ -1,15 +1,16 @@
 {
-  "name": "github-viewer",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "test": "vue-cli-service test:unit"
   },
   "dependencies": {
     "@commitlint/cli": "^12.0.1",
     "@commitlint/config-conventional": "^12.0.1",
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "husky": "^4.3.8",
     "vue": "^2.6.11",
@@ -41,7 +42,8 @@
   },
   "husky": {
     "hooks": {
-      "commit-msg": "npx commitlint --edit $1"
+      "commit-msg": "npx commitlint --edit $1",
+      "pre-commit": "npm run lint && npm run test"
     }
   }
 }
