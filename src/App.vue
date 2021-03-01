@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import TopBar from '@/components/TopBar/index.vue';
+import TopBar from '@/components/TopBar.vue';
 
 @Component({
   components: { TopBar },
@@ -15,4 +15,10 @@ import TopBar from '@/components/TopBar/index.vue';
 export default class App extends Vue {}
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+</style>

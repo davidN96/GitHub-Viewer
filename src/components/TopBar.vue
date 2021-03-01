@@ -2,9 +2,15 @@
   <div class="topBar_wrapper">
     <header>
       <div class="back">
-        <i class="fas fa-arrow-left"></i>
+        <div
+          class="backBtnWrapper"
+          v-if="!(this.$route.name === 'Main')"
+          @click="handleBack"
+        >
+          <i class="fas fa-arrow-left"></i>
+        </div>
       </div>
-      <router-link to="/">
+      <router-link :to="{ name: 'Main' }">
         <div class="logo">
           <i class="fab fa-github"></i>
         </div>
@@ -18,10 +24,8 @@ import { Component, Vue } from 'vue-property-decorator';
 
 @Component
 export default class TopBar extends Vue {
-  mounted() {
-    const currentRoute: string | null | undefined = this.$route.name;
-
-    console.log(currentRoute);
+  handleBack(): void {
+    this.$router.back();
   }
 }
 </script>
@@ -33,16 +37,23 @@ export default class TopBar extends Vue {
   width: 100vw;
   justify-content: center;
   background-color: $darkGray;
-  box-shadow: 0px 1px 10px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 1px 7px 0px rgba(0, 0, 0, 0.75);
 
   header {
     display: flex;
     width: 100%;
-    max-width: $lg-min;
+    max-width: $xl-min;
     justify-content: space-between;
 
     .back {
       cursor: pointer;
+
+      &:hover {
+        i {
+          color: $hoverGray;
+          transition: 0.1s;
+        }
+      }
     }
 
     i {
