@@ -33,6 +33,8 @@ export default class TopBar extends Vue {
 <style lang="scss" scoped>
 .topBar_wrapper {
   display: flex;
+  position: absolute;
+  top: 0;
   padding: 2vh 5vw;
   width: 100vw;
   justify-content: center;

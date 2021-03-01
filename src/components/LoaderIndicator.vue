@@ -1,5 +1,5 @@
 <template>
-  <div class="loaderWrapper">
+  <div class="indicatorWrapper">
     <i class="fas fa-circle-notch"></i>
   </div>
 </template>
@@ -12,7 +12,7 @@ export default class LoaderIndicator extends Vue {}
 </script>
 
 <style lang="scss" scoped>
-.loaderWrapper {
+.indicatorWrapper {
   display: flex;
   width: 50px;
   height: 50px;
@@ -22,6 +22,7 @@ export default class LoaderIndicator extends Vue {}
   i {
     font-size: 2.5rem;
     @include animate(spin, $animation-default-time, infinite);
+    color: $green;
   }
 }
 </style>
