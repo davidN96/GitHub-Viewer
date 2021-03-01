@@ -134,3 +134,11 @@ describe.skip('getRepositoryCommits()', () => {
     expect(commits.length).toBeGreaterThan(2);
   });
 });
+
+describe('getRateLimit()', () => {
+  it('Should return limit', async () => {
+    const limits: Types.RateLimitResponse = await GithubAPI.getRateLimit();
+
+    expect(limits.rate.reset).toBeGreaterThan(0);
+  });
+});

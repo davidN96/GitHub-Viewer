@@ -131,4 +131,12 @@ export default class GithubAPI {
 
     return response.data;
   }
+
+  static async getRateLimit(): Promise<Types.RateLimitResponse> {
+    const response: AxiosResponse<Types.RateLimitResponse> = await API.get(
+      '/rate_limit'
+    );
+
+    return response.data;
+  }
 }

@@ -220,3 +220,20 @@ export interface Commit {
   committer: User;
   parents: CommitParent[];
 }
+
+export interface RateLimit {
+  limit: number;
+  remaining: number;
+  reset: number;
+  used: number;
+}
+
+export interface RateLimitResponse {
+  resources: {
+    core: RateLimit;
+    graphql: RateLimit;
+    integration_manifest: RateLimit;
+    search: RateLimit;
+  };
+  rate: RateLimit;
+}
