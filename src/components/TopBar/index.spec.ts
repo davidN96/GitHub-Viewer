@@ -1,4 +1,4 @@
-import { mount, shallowMount, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import TopBar from './index.vue';
 import router from '@/router';
 import VueRouter from 'vue-router';

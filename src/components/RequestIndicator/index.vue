@@ -21,7 +21,7 @@
               <h4
                 :class="{
                   error: searchCount < 3,
-                  warning: searchCount < 5,
+                  warning: searchCount <= 5,
                   success: searchCount > 5,
                 }"
               >
@@ -33,7 +33,7 @@
               <h4
                 :class="{
                   error: profileCount < 3,
-                  warning: profileCount < 5,
+                  warning: profileCount <= 5,
                   success: profileCount > 5,
                 }"
               >
@@ -63,8 +63,12 @@ import { Vue, Component } from 'vue-property-decorator';
 @Component
 export default class RequestIndicatorr extends Vue {
   private isActive: boolean = false;
-  private searchCount: number = 10;
-  private profileCount: number = 60;
+  private get searchCount(): number {
+    return this.$store.state.requests.search;
+  }
+  private get profileCount(): number {
+    return this.$store.state.requests.profile;
+  }
 
   private handleActivation(): void {
     this.isActive = !this.isActive;

@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import Loader from './Loader.vue';
+import Loader from './index.vue';
 
 test('Loader', () => {
   const title: string = 'Hello';

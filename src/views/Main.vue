@@ -40,6 +40,7 @@ export default class Main extends Vue {
   private searchMode: string = SearchMode.user;
   private keyWord: string = '';
   private searchRoute: string = '';
+  private searchLimitExceeded: boolean = !!this.$store.state.requests.search;
 }
 </script>
 
