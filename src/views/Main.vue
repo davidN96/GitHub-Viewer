@@ -42,7 +42,8 @@ export default class Main extends Vue {
   private searchRoute: string = '';
 
   @Watch('keyWord')
-  handleKeywordChange(): void {
+  @Watch('searchMode')
+  private handleKeywordChange(): void {
     this.searchRoute = `/search/${this.searchMode}/${this.keyWord}`;
   }
 }

@@ -1,0 +1,14 @@
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@mixin animate($animation, $duration, $iterations) {
+  animation-name: $animation;
+  animation-duration: $duration;
+  animation-iteration-count: $iterations;
+}

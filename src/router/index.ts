@@ -10,6 +10,11 @@ const routes: Array<RouteConfig> = [
     name: 'Main',
     component: MainView,
   },
+  {
+    path: '/search/:mode/:keyword',
+    name: 'Search',
+    component: () => import('@/views/SearchResults.vue'),
+  },
 ];
 
 const router = new VueRouter({
