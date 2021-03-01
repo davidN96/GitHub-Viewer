@@ -1,23 +1,51 @@
 <template>
   <div class="mainWrapper">
     <form class="searchForm">
-      <div class="searchBox">
-        <input type="text" class="name" />
-        <button>
-          <i class="fas fa-search"></i>
-        </button>
-      </div>
+      <label for="mode"
+        >Please enter
+        {{ searchMode }}
+        name</label
+      >
+      <input
+        type="text"
+        class="name"
+        placeholder="Enter keyword..."
+        autocomplete="off"
+        v-model="keyWord"
+      />
 
-      <div class="selectMode"></div>
+      <label for="mode">What are you looking for?</label>
+      <select name="mode" id="mode" v-model="searchMode">
+        <option v-for="option in modeOptions" :value="option" :key="option">{{
+          option | capitalize
+        }}</option>
+      </select>
+      <router-link :to="searchRoute">
+        <button :disabled="keyWord.length < 3">
+          <i class="fas fa-search"></i>
+          Search
+        </button>
+      </router-link>
     </form>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Watch, Vue } from 'vue-property-decorator';
+import { SearchMode } from '@/global.ts';
 
 @Component
-export default class Main extends Vue {}
+export default class Main extends Vue {
+  private modeOptions: string[] = [SearchMode.user, SearchMode.repo];
+  private searchMode: string = SearchMode.user;
+  private keyWord: string = '';
+  private searchRoute: string = '';
+
+  @Watch('keyWord')
+  handleKeywordChange(): void {
+    this.searchRoute = `/search/${this.searchMode}/${this.keyWord}`;
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -31,41 +59,71 @@ export default class Main extends Vue {}
     display: flex;
     flex-direction: column;
 
-    .searchBox {
-      display: flex;
+    #mode {
+      padding: 0.9vh 2vw;
+      margin-top: 1vh;
+      margin-bottom: 4vh;
+      background-color: $inputBackground;
+      font-size: 1.3rem;
+      border-radius: $min-radius;
+      border: 2px solid $hoverGray;
+      text-align-last: center;
+      transition: 0.2s;
+      cursor: pointer;
 
-      .name {
-        padding: 1vh 2vw;
-        background-color: rgba(255, 255, 255, 0.8);
-        outline: none;
-        border: 1px solid $hoverGray;
-        border-top-left-radius: $min-radius;
-        border-bottom-left-radius: $min-radius;
-        border-right: 2px solid $hoverGray;
-        font-size: 1.2rem;
+      &:focus {
+        border-color: $green;
+      }
+    }
 
-        &::selection {
-          background-color: transparent;
-          color: $green;
-        }
+    .name {
+      padding: 1.2vh 2vw;
+      margin-top: 1vh;
+      margin-bottom: 3vh;
+      background-color: $inputBackground;
+      outline: none;
+      border: 2px solid $hoverGray;
+      border-radius: $min-radius;
+      border-right: 2px solid $hoverGray;
+      font-size: 1.2rem;
+      text-align: center;
+      transition: 0.2s;
+      cursor: pointer;
+      outline: none;
+
+      &::selection {
+        background-color: transparent;
+        color: $green;
       }
 
-      button {
-        display: flex;
-        padding: 1vh 2vw;
-        font-size: 1.2rem;
-        border: 2px solid $green;
-        border-top-right-radius: $min-radius;
-        border-bottom-right-radius: $min-radius;
-        outline: none;
-        cursor: pointer;
-        background-color: $green;
-        color: $textWhite;
-        align-items: center;
+      &:focus {
+        border-color: $green;
+      }
+    }
 
-        @include md {
-          padding: 1vh 1.2vw;
-        }
+    button {
+      width: 100%;
+      margin-top: 2vh;
+      padding: 1.1vh 0;
+      font-size: 1.2rem;
+      border: 2px solid $green;
+      border-radius: $min-radius;
+      outline: none;
+      cursor: pointer;
+      background-color: $green;
+      color: $textWhite;
+      transition: 0.15s;
+
+      &:hover {
+        background-color: $hoverGreen;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+      }
+
+      i {
+        margin-right: 5px;
       }
     }
   }
