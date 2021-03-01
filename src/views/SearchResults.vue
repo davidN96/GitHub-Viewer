@@ -7,10 +7,15 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import Loader from '@/components/Loader.vue';
+import UserTile from '@/components/UserTile.vue';
+import GithubAPI from '@/controllers/api';
+import { User, Repository } from '@/controllers/api/types';
+import { FindUserParams, FindRepositoryParams } from '@/controllers/api/types';
 
-@Component({ components: { Loader } })
+@Component({ components: { Loader, UserTile } })
 export default class SearchResult extends Vue {
-  private fetchingData: boolean = false;
+  private fetchingData: boolean = true;
+  private data: Array<User | Repository> = [];
 }
 </script>
 
@@ -18,6 +23,8 @@ export default class SearchResult extends Vue {
 .searchResultsWrapper {
   display: flex;
   flex-grow: 1;
-  z-index: -1;
+  margin: 0 auto;
+  padding: 13vh 0;
+  max-width: $xl-min;
 }
 </style>

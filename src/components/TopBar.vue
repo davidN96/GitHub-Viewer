@@ -40,6 +40,7 @@ export default class TopBar extends Vue {
   justify-content: center;
   background-color: $darkGray;
   box-shadow: 0px 1px 7px 0px rgba(0, 0, 0, 0.75);
+  z-index: 10;
 
   header {
     display: flex;
