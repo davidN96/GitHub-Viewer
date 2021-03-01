@@ -59,15 +59,18 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
+import { RateLimitResponse } from '@/controllers/api/types';
+import API from '@/controllers/api';
 
 @Component
-export default class RequestIndicatorr extends Vue {
+export default class RequestIndicator extends Vue {
   private isActive: boolean = false;
+
   private get searchCount(): number {
-    return this.$store.state.requests.search;
+    return this.$store.state.requests.search.quantity;
   }
   private get profileCount(): number {
-    return this.$store.state.requests.profile;
+    return this.$store.state.requests.profile.quantity;
   }
 
   private handleActivation(): void {
@@ -101,13 +104,12 @@ export default class RequestIndicatorr extends Vue {
       justify-content: center;
       align-items: center;
       transition: visibility 0.2s;
+      padding: 5vh 2vw;
+      text-align: center;
 
       @include sm() {
         width: 40vw;
       }
-
-      padding: 5vh 2vw;
-      text-align: center;
 
       h3 {
         margin-bottom: 2vh;

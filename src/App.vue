@@ -10,6 +10,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import TopBar from '@/components/TopBar/index.vue';
 import RequestIndicator from '@/components/RequestIndicator/index.vue';
+import ErrorModal from '@/components/ErrorModal/index.vue';
 
 @Component({
   components: { TopBar, RequestIndicator },
