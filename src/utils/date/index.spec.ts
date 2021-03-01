@@ -63,3 +63,17 @@ describe('getMinutes()', () => {
     expect(Time.getMinutes(defaultDate)).toBe('12');
   });
 });
+
+describe('unifyDate()', () => {
+  it('Should convert date object to universal string', () => {
+    const date: string = Time.unifyDate(defaultDate);
+    expect(date).toBe('12-12-2020');
+  });
+});
+
+describe('unifyTime()', () => {
+  it('Should convert date object to universal time string', () => {
+    const time: string = Time.unifyTime(defaultDate);
+    expect(time).toBe('21:12');
+  });
+});

@@ -135,7 +135,7 @@ describe.skip('getRepositoryCommits()', () => {
   });
 });
 
-describe('getRateLimit()', () => {
+describe.skip('getRateLimit()', () => {
   it('Should return limit', async () => {
     const limits: Types.RateLimitResponse = await GithubAPI.getRateLimit();
 
