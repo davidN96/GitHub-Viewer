@@ -26,3 +26,28 @@ $xl-min: 1200px;
     @content;
   }
 }
+
+.fadedIn {
+  @include animate(fadeIn, 0.5s, 1);
+}
+
+.fadedOut {
+  @include animate(fadeOut, 0.5s, 1);
+  visibility: hidden;
+}
+
+.hided {
+  display: none;
+}
+
+.success {
+  color: $green;
+}
+
+.warning {
+  color: $orange;
+}
+
+.error {
+  color: $red;
+}

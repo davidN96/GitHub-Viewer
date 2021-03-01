@@ -8,9 +8,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 import Loader from '@/components/Loader.vue';
 import UserTile from '@/components/UserTile.vue';
-import GithubAPI from '@/controllers/api';
 import { User, Repository } from '@/controllers/api/types';
-import { FindUserParams, FindRepositoryParams } from '@/controllers/api/types';
 
 @Component({ components: { Loader, UserTile } })
 export default class SearchResult extends Vue {

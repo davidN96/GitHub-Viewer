@@ -61,7 +61,7 @@ export default class Main extends Vue {
     flex-direction: column;
 
     #mode {
-      padding: 0.9vh 2vw;
+      padding: 0.7rem 2vw;
       margin-top: 1vh;
       margin-bottom: 4vh;
       background-color: $inputBackground;
@@ -72,13 +72,17 @@ export default class Main extends Vue {
       transition: 0.2s;
       cursor: pointer;
 
+      @include sm() {
+        padding: 0.4rem 2vw;
+      }
+
       &:focus {
         border-color: $green;
       }
     }
 
     .name {
-      padding: 1.2vh 2vw;
+      padding: 0.8rem 2vw;
       margin-top: 1vh;
       margin-bottom: 3vh;
       background-color: $inputBackground;
@@ -91,6 +95,10 @@ export default class Main extends Vue {
       transition: 0.2s;
       cursor: pointer;
       outline: none;
+
+      @include sm() {
+        padding: 0.5rem 2vw;
+      }
 
       &::selection {
         background-color: transparent;
@@ -105,7 +113,7 @@ export default class Main extends Vue {
     button {
       width: 100%;
       margin-top: 2vh;
-      padding: 1.1vh 0;
+      padding: 0.8rem 2vw;
       font-size: 1.2rem;
       border: 2px solid $green;
       border-radius: $min-radius;
@@ -114,6 +122,11 @@ export default class Main extends Vue {
       background-color: $green;
       color: $textWhite;
       transition: 0.15s;
+      z-index: 0;
+
+      @include sm() {
+        padding: 0.5rem 2vw;
+      }
 
       &:hover {
         background-color: $hoverGreen;
