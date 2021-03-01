@@ -6,8 +6,8 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import Loader from '@/components/Loader.vue';
-import UserTile from '@/components/UserTile.vue';
+import Loader from '@/components/Loader/index.vue';
+import UserTile from '@/components/UserTile/index.vue';
 import { User, Repository } from '@/controllers/api/types';
 
 @Component({ components: { Loader, UserTile } })

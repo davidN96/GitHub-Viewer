@@ -6,24 +6,18 @@
       @click="handleActivation"
     >
       <div class="requestIndicatorModal" :class="{ fadedOut: !isActive }">
-        <h3>
-          GitHub API
-        </h3>
+        <h3>GitHub API</h3>
         <h4>
           Because of GitHub API rate limitations the quantity of request are
           restricted.
         </h4>
         <div class="requests">
           <header>
-            <h4>
-              Possible requests:
-            </h4>
+            <h4>Possible requests:</h4>
           </header>
           <main>
             <div class="requestCount">
-              <h4>
-                Search:
-              </h4>
+              <h4>Search:</h4>
               <h4
                 :class="{
                   error: searchCount < 3,
@@ -35,9 +29,7 @@
               </h4>
             </div>
             <div class="requestCount">
-              <h4>
-                Profile:
-              </h4>
+              <h4>Profile:</h4>
               <h4
                 :class="{
                   error: profileCount < 3,
@@ -72,7 +64,7 @@ import { Vue, Component } from 'vue-property-decorator';
 export default class RequestIndicatorr extends Vue {
   private isActive: boolean = false;
   private searchCount: number = 10;
-  private profileCount: number = 2;
+  private profileCount: number = 60;
 
   private handleActivation(): void {
     this.isActive = !this.isActive;

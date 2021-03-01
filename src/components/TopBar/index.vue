@@ -2,11 +2,7 @@
   <div class="topBar_wrapper">
     <header>
       <div class="back">
-        <div
-          class="backBtnWrapper"
-          v-if="!(this.$route.name === 'Main')"
-          @click="handleBack"
-        >
+        <div class="backBtnWrapper" v-if="isOutOfMain" @click="handleBack">
           <i class="fas fa-arrow-left"></i>
         </div>
       </div>
@@ -24,6 +20,10 @@ import { Component, Vue } from 'vue-property-decorator';
 
 @Component
 export default class TopBar extends Vue {
+  private get isOutOfMain(): boolean {
+    return this.$route.name !== 'Main';
+  }
+
   handleBack(): void {
     this.$router.back();
   }

@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import LoaderIndicator from '@/components/LoaderIndicator.vue';
+import LoaderIndicator from '@/components/LoaderIndicator/index.vue';
 
 @Component({
   components: { LoaderIndicator },

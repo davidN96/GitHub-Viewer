@@ -4,8 +4,8 @@
       <label for="mode"
         >Please enter
         {{ searchMode }}
-        name</label
-      >
+        name
+      </label>
       <input
         type="text"
         class="name"
@@ -20,7 +20,7 @@
           option | capitalize
         }}</option>
       </select>
-      <router-link :to="searchRoute">
+      <router-link :to="`/search/${searchMode}/${keyWord}`">
         <button :disabled="keyWord.length < 3">
           <i class="fas fa-search"></i>
           Search
@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Watch, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { SearchMode } from '@/global.ts';
 
 @Component
@@ -40,12 +40,6 @@ export default class Main extends Vue {
   private searchMode: string = SearchMode.user;
   private keyWord: string = '';
   private searchRoute: string = '';
-
-  @Watch('keyWord')
-  @Watch('searchMode')
-  private handleKeywordChange(): void {
-    this.searchRoute = `/search/${this.searchMode}/${this.keyWord}`;
-  }
 }
 </script>
 

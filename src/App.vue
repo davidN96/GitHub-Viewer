@@ -8,8 +8,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import TopBar from '@/components/TopBar.vue';
-import RequestIndicator from '@/components/RequestIndicator.vue';
+import TopBar from '@/components/TopBar/index.vue';
+import RequestIndicator from '@/components/RequestIndicator/index.vue';
 
 @Component({
   components: { TopBar, RequestIndicator },

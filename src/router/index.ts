@@ -4,7 +4,7 @@ import MainView from '@/views/Main.vue';
 
 Vue.use(VueRouter);
 
-const routes: Array<RouteConfig> = [
+export const routes: Array<RouteConfig> = [
   {
     path: '/',
     name: 'Main',

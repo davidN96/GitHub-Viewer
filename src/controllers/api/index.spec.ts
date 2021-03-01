@@ -9,7 +9,7 @@ import * as Types from './types';
 const defaultUser: string = 'davidN96';
 const defaultRepository: string = 'GitHub-Viewer';
 
-describe('getUser()', () => {
+describe.skip('getUser()', () => {
   it('Shuld return users info', async () => {
     const foundedUser: Types.ExtendedUser = await GitHubAPI.getUser(
       defaultUser
@@ -26,7 +26,7 @@ describe('getUser()', () => {
   });
 });
 
-describe('findUser()', () => {
+describe.skip('findUser()', () => {
   it('Should find users with query', async () => {
     const params: Types.FindUserParams = {
       q: 'david',
@@ -44,7 +44,7 @@ describe('findUser()', () => {
   });
 });
 
-describe('getRepository()', () => {
+describe.skip('getRepository()', () => {
   it('Should get repository', async () => {
     const repository: Types.ExtendedRepository = await GithubAPI.getRepository(
       defaultUser,
@@ -55,7 +55,7 @@ describe('getRepository()', () => {
   });
 });
 
-describe('findRepository()', () => {
+describe.skip('findRepository()', () => {
   it('Should find repository with query', async () => {
     const params: Types.FindRepositoryParams = {
       q: 'GitHub',
@@ -73,7 +73,7 @@ describe('findRepository()', () => {
   });
 });
 
-describe('getUserRepositories()', () => {
+describe.skip('getUserRepositories()', () => {
   it('Should return users repositories', async () => {
     const repositories: Types.Repository[] = await GithubAPI.getUserRepositories(
       defaultUser
@@ -83,7 +83,7 @@ describe('getUserRepositories()', () => {
   });
 });
 
-describe('getRepositoryContributors()', () => {
+describe.skip('getRepositoryContributors()', () => {
   it('Should get repo contributors', async () => {
     const contributors: Types.Contributor[] = await GithubAPI.getRepositoryContributors(
       defaultUser,
@@ -94,7 +94,7 @@ describe('getRepositoryContributors()', () => {
   });
 });
 
-describe('getUsersStarredProjects()', () => {
+describe.skip('getUsersStarredProjects()', () => {
   it('Should return starred projects', async () => {
     const starredProjects: Types.Repository[] = await GithubAPI.getUserStarredProjects(
       defaultUser
@@ -104,7 +104,7 @@ describe('getUsersStarredProjects()', () => {
   });
 });
 
-describe('getUserFollowers()', () => {
+describe.skip('getUserFollowers()', () => {
   it('Should return user followers list', async () => {
     const followers: Types.User[] = await GithubAPI.getUserFollowers(
       defaultUser
@@ -114,7 +114,7 @@ describe('getUserFollowers()', () => {
   });
 });
 
-describe('getFollowedByUser()', () => {
+describe.skip('getFollowedByUser()', () => {
   it('Should return users followed by user', async () => {
     const followed: Types.User[] = await GithubAPI.getFollowedByUser(
       defaultUser
@@ -124,7 +124,7 @@ describe('getFollowedByUser()', () => {
   });
 });
 
-describe('getRepositoryCommits()', () => {
+describe.skip('getRepositoryCommits()', () => {
   it('Should return list of repo commits', async () => {
     const commits: Types.Commit[] = await GithubAPI.getRepositoryCommits(
       defaultUser,
