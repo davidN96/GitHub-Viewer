@@ -13,7 +13,7 @@ import RequestIndicator from '@/components/RequestIndicator/index.vue';
 import ErrorModal from '@/components/ErrorModal/index.vue';
 
 @Component({
-  components: { TopBar, RequestIndicator },
+  components: { TopBar, RequestIndicator, ErrorModal },
 })
 export default class App extends Vue {}
 </script>

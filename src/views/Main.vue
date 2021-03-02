@@ -20,8 +20,11 @@
           option | capitalize
         }}</option>
       </select>
+      <div class="mainLimitExceeded" v-if="limitExceeded">
+        <h5>Search limit exceeded, try again later</h5>
+      </div>
       <router-link :to="`/search/${searchMode}/${keyWord}`">
-        <button :disabled="keyWord.length < 3">
+        <button :disabled="shouldBeButtonDisabled">
           <i class="fas fa-search"></i>
           Search
         </button>
@@ -40,7 +43,9 @@ export default class Main extends Vue {
   private searchMode: string = SearchMode.user;
   private keyWord: string = '';
   private searchRoute: string = '';
-  private searchLimitExceeded: boolean = !!this.$store.state.requests.search;
+  private limitExceeded: boolean = !this.$store.state.requests.search.quantity;
+  private shouldBeButtonDisabled: boolean =
+    this.limitExceeded && this.keyWord.length < 3;
 }
 </script>
 
@@ -50,6 +55,14 @@ export default class Main extends Vue {
   flex-grow: 1;
   justify-content: center;
   align-items: center;
+
+  .mainLimitExceeded {
+    margin-bottom: 2vh;
+
+    h5 {
+      color: $red;
+    }
+  }
 
   .searchForm {
     display: flex;

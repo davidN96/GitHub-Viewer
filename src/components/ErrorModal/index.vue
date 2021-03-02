@@ -1,5 +1,8 @@
 <template>
-  <div class="errorModalWrapper">
+  <div
+    class="errorModalWrapper"
+    :class="{ fadedIn: isActive, fadedOut: !isActive }"
+  >
     <div class="errorModal">
       <header>
         <div class="errorModalIcon">
@@ -19,10 +22,23 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 
 @Component
 export default class ErrorModal extends Vue {
-  private visible: boolean = true;
+  private isActive: boolean = true;
   @Prop({ default: 'Error' }) private title!: string;
   @Prop({ default: 'Sorry, error ocurred' }) private message!: string;
   @Prop(String) private redirectTo: string | undefined;
+
+  private redirect() {
+    this.$router.push({ path: this.redirectTo });
+  }
+
+  mounted() {
+    if (this.redirectTo) {
+      setTimeout(() => {
+        this.isActive = false;
+        this.redirect();
+      }, 1300);
+    }
+  }
 }
 </script>
 
@@ -33,8 +49,8 @@ export default class ErrorModal extends Vue {
   z-index: 11;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100vw;
+  height: 100vh;
   background-color: rgba(0, 0, 0, 0.7);
   justify-content: center;
   align-items: center;
@@ -55,7 +71,7 @@ export default class ErrorModal extends Vue {
     justify-content: center;
     align-items: center;
     transition: visibility 0.2s;
-    padding: 5vh 2vw;
+    padding: 0vh 5vw;
     text-align: center;
 
     @include sm() {
@@ -64,7 +80,7 @@ export default class ErrorModal extends Vue {
 
     header {
       .errorModalIcon {
-        font-size: 2.3rem;
+        font-size: 2.8rem;
         color: $red;
       }
 

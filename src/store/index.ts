@@ -8,22 +8,24 @@ const store = new Store({
     requests: {
       search: {
         quantity: 10,
-        nextRequest: new Date(),
+        nextRequest: undefined,
       },
       profile: {
         quantity: 60,
-        nextRequest: new Date(),
+        nextRequest: undefined,
       },
     },
   },
   mutations: {
-    setRequestCount(state, { type, quantity }) {
+    setRequestCount(state, { type, quantity, reset }) {
       const { requests } = state;
       switch (type) {
         case 'search':
+          requests.search.nextRequest = reset;
           return (requests.search.quantity = quantity);
 
         case 'profile':
+          requests.profile.nextRequest = reset;
           return (requests.profile.quantity = quantity);
       }
     },

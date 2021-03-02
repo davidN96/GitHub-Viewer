@@ -1,5 +1,10 @@
 <template>
   <div class="requestIndicatorWrapper">
+    <ErrorModal
+      v-if="isCrashed"
+      :title="'Sorry'"
+      :message="'API error ocurred, please refresh page or try again later'"
+    />
     <div
       class="requestIndicatorBackdrop"
       :class="{ fadedIn: isActive, fadedOut: !isActive }"
@@ -27,6 +32,13 @@
               >
                 {{ searchCount }}
               </h4>
+              <h5>Next reset:</h5>
+              <p>
+                {{ nextSearchRequest | unifyDate }}
+              </p>
+              <p>
+                {{ nextSearchRequest | unifyTime }}
+              </p>
             </div>
             <div class="requestCount">
               <h4>Profile:</h4>
@@ -39,6 +51,13 @@
               >
                 {{ profileCount }}
               </h4>
+              <h5>Next reset:</h5>
+              <p>
+                {{ nextSearchRequest | unifyDate }}
+              </p>
+              <p>
+                {{ nextSearchRequest | unifyTime }}
+              </p>
             </div>
           </main>
         </div>
@@ -59,12 +78,17 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import { RateLimitResponse } from '@/controllers/api/types';
+import { RateLimitResponse, RateLimit } from '@/controllers/api/types';
+import { convertTimeStampToDateTime } from '@/utils/date';
 import API from '@/controllers/api';
 
 @Component
 export default class RequestIndicator extends Vue {
   private isActive: boolean = false;
+  private isCrashed: boolean = false;
+  private get nextSearchRequest(): Date {
+    return this.$store.state.requests.search.nextRequest || new Date();
+  }
 
   private get searchCount(): number {
     return this.$store.state.requests.search.quantity;
@@ -75,6 +99,32 @@ export default class RequestIndicator extends Vue {
 
   private handleActivation(): void {
     this.isActive = !this.isActive;
+  }
+
+  private async refreshRateLimit(): Promise<void> {
+    try {
+      const currentLimit: RateLimitResponse = await API.getRateLimit();
+      const searchLimit: RateLimit = currentLimit.resources.search;
+      const profileLimit: RateLimit = currentLimit.resources.core;
+
+      this.$store.commit('setRequestCount', {
+        type: 'search',
+        reset: convertTimeStampToDateTime(profileLimit.reset),
+        quantity: searchLimit.limit,
+      });
+
+      this.$store.commit('setRequestCount', {
+        type: 'profile',
+        reset: convertTimeStampToDateTime(profileLimit.reset),
+        quantity: profileLimit.limit,
+      });
+    } catch (error) {
+      this.isCrashed = true;
+    }
+  }
+
+  async mounted(): Promise<void> {
+    await this.refreshRateLimit();
   }
 }
 </script>
@@ -129,6 +179,12 @@ export default class RequestIndicator extends Vue {
           display: flex;
           margin-top: 2vh;
           justify-content: space-around;
+
+          .requestCount {
+            p {
+              font-size: 0.7rem;
+            }
+          }
         }
       }
 
