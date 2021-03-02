@@ -17,6 +17,17 @@ const store = new Store({
     },
   },
   mutations: {
+    setRequestDate(state, { type, date }) {
+      switch (type) {
+        case 'search':
+          state.requests.search.nextRequest = date;
+          break;
+
+        case 'profile':
+          state.requests.profile.nextRequest = date;
+          break;
+      }
+    },
     setRequestCount(state, { type, quantity, reset }) {
       const { requests } = state;
       switch (type) {

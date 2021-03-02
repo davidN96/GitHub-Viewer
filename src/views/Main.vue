@@ -24,7 +24,7 @@
         <h5>Search limit exceeded, try again later</h5>
       </div>
       <router-link :to="`/search/${searchMode}/${keyWord}`">
-        <button :disabled="shouldBeButtonDisabled">
+        <button :disabled="limitExceeded || keyWord.length < 3">
           <i class="fas fa-search"></i>
           Search
         </button>
@@ -43,9 +43,8 @@ export default class Main extends Vue {
   private searchMode: string = SearchMode.user;
   private keyWord: string = '';
   private searchRoute: string = '';
-  private limitExceeded: boolean = !this.$store.state.requests.search.quantity;
-  private shouldBeButtonDisabled: boolean =
-    this.limitExceeded && this.keyWord.length < 3;
+  private limitExceeded: boolean =
+    this.$store.state.requests.search.quantity === 0;
 }
 </script>
 

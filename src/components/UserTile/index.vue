@@ -1,10 +1,10 @@
 <template>
   <div class="userTileWrapper">
     <div class="thumbnail">
-      <img :src="User.avatar_url" alt="avatar" />
+      <img :src="user.avatar_url" alt="avatar" />
     </div>
     <div class="informations">
-      <h4>{{ User.login }}</h4>
+      <h4>{{ user.login }}</h4>
     </div>
   </div>
 </template>
@@ -15,7 +15,7 @@ import { User } from '@/controllers/api/types.ts';
 
 @Component
 export default class UserTile extends Vue {
-  @Prop() readonly User!: User;
+  @Prop() readonly user!: User;
 }
 </script>
 

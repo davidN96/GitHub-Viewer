@@ -77,7 +77,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Watch } from 'vue-property-decorator';
 import { RateLimitResponse, RateLimit } from '@/controllers/api/types';
 import { convertTimeStampToDateTime } from '@/utils/date';
 import API from '@/controllers/api';
@@ -101,6 +101,24 @@ export default class RequestIndicator extends Vue {
     this.isActive = !this.isActive;
   }
 
+  private async refreshNextRequest(mode: string): Promise<void> {
+    try {
+      const currentLimit: RateLimitResponse = await API.getRateLimit();
+      const date: Date = convertTimeStampToDateTime(
+        mode === 'search'
+          ? currentLimit.resources.search.reset
+          : currentLimit.resources.core.reset
+      );
+
+      this.$store.commit('setRequestDate', {
+        date,
+        type: mode,
+      });
+    } catch (error) {
+      this.isCrashed = true;
+    }
+  }
+
   private async refreshRateLimit(): Promise<void> {
     try {
       const currentLimit: RateLimitResponse = await API.getRateLimit();
@@ -121,6 +139,13 @@ export default class RequestIndicator extends Vue {
     } catch (error) {
       this.isCrashed = true;
     }
+  }
+
+  @Watch('$store.state.requests.search.quantity')
+  @Watch('$store.state.requests.profile.quantity')
+  private async handleRequestCountEnd(): Promise<void> {
+    if (this.searchCount === 0) await this.refreshNextRequest('search');
+    if (this.searchCount === 0) await this.refreshNextRequest('profile');
   }
 
   async mounted(): Promise<void> {
