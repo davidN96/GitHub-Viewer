@@ -33,10 +33,10 @@ export default class TopBar extends Vue {
 <style lang="scss" scoped>
 .topBar_wrapper {
   display: flex;
-  position: absolute;
+  position: fixed;
   top: 0;
   padding: 2vh 5vw;
-  width: 100vw;
+  width: 100%;
   justify-content: center;
   background-color: $darkGray;
   box-shadow: 0px 1px 7px 0px rgba(0, 0, 0, 0.75);
@@ -49,12 +49,18 @@ export default class TopBar extends Vue {
     justify-content: space-between;
 
     .back {
+      display: flex;
+      justify-content: center;
+      align-items: center;
       cursor: pointer;
+      color: $white;
 
-      &:hover {
-        i {
-          color: $hoverGray;
-          transition: 0.1s;
+      i {
+        font-size: 1.5rem;
+
+        &:hover {
+          color: $green;
+          transition: 0.2s;
         }
       }
     }

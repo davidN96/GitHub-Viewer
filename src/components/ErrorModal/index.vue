@@ -34,8 +34,8 @@ export default class ErrorModal extends Vue {
   mounted() {
     if (this.redirectTo) {
       setTimeout(() => {
-        this.isActive = false;
         this.redirect();
+        this.isActive = false;
       }, 1300);
     }
   }

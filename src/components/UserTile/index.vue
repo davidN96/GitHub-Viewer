@@ -4,7 +4,7 @@
       <img :src="user.avatar_url" alt="avatar" />
     </div>
     <div class="informations">
-      <h4>{{ user.login }}</h4>
+      <p>{{ user.login }}</p>
     </div>
   </div>
 </template>
@@ -22,8 +22,9 @@ export default class UserTile extends Vue {
 <style lang="scss" scoped>
 .userTileWrapper {
   display: flex;
-  width: 80vw;
+  width: 90%;
   align-items: center;
+  margin: 1vh 0;
   padding: 2vh 2vw;
   border: 1px solid $darkGray;
   border-radius: $min-radius;
@@ -31,7 +32,8 @@ export default class UserTile extends Vue {
   cursor: pointer;
 
   @include sm() {
-    width: 26.66vw;
+    width: 30%;
+    margin: 1vh 1.5%;
   }
 
   .thumbnail {
@@ -48,9 +50,12 @@ export default class UserTile extends Vue {
 
   .informations {
     display: flex;
-    flex-grow: 1;
-    justify-content: center;
-    margin-left: -8vh;
+    padding-left: 10%;
+
+    p {
+      text-align: center;
+      word-break: break-all;
+    }
   }
 }
 </style>

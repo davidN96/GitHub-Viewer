@@ -43,8 +43,10 @@ export default class Main extends Vue {
   private searchMode: string = SearchMode.user;
   private keyWord: string = '';
   private searchRoute: string = '';
-  private limitExceeded: boolean =
-    this.$store.state.requests.search.quantity === 0;
+
+  private get limitExceeded(): boolean {
+    return this.$store.state.requests.search.quantity === 0;
+  }
 }
 </script>
 
@@ -76,7 +78,7 @@ export default class Main extends Vue {
       border-radius: $min-radius;
       border: 2px solid $hoverGray;
       text-align-last: center;
-      transition: 0.2s;
+      transition: 0.5s;
       cursor: pointer;
 
       @include sm() {
@@ -99,7 +101,7 @@ export default class Main extends Vue {
       border-right: 2px solid $hoverGray;
       font-size: 1.2rem;
       text-align: center;
-      transition: 0.2s;
+      transition: 0.5s;
       cursor: pointer;
       outline: none;
 

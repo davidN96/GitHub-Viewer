@@ -53,10 +53,10 @@
               </h4>
               <h5>Next reset:</h5>
               <p>
-                {{ nextSearchRequest | unifyDate }}
+                {{ nextProfileRequest | unifyDate }}
               </p>
               <p>
-                {{ nextSearchRequest | unifyTime }}
+                {{ nextProfileRequest | unifyTime }}
               </p>
             </div>
           </main>
@@ -86,8 +86,13 @@ import API from '@/controllers/api';
 export default class RequestIndicator extends Vue {
   private isActive: boolean = false;
   private isCrashed: boolean = false;
+
   private get nextSearchRequest(): Date {
     return this.$store.state.requests.search.nextRequest || new Date();
+  }
+
+  private get nextProfileRequest(): Date {
+    return this.$store.state.requests.profile.nextRequest || new Date();
   }
 
   private get searchCount(): number {
@@ -101,24 +106,6 @@ export default class RequestIndicator extends Vue {
     this.isActive = !this.isActive;
   }
 
-  private async refreshNextRequest(mode: string): Promise<void> {
-    try {
-      const currentLimit: RateLimitResponse = await API.getRateLimit();
-      const date: Date = convertTimeStampToDateTime(
-        mode === 'search'
-          ? currentLimit.resources.search.reset
-          : currentLimit.resources.core.reset
-      );
-
-      this.$store.commit('setRequestDate', {
-        date,
-        type: mode,
-      });
-    } catch (error) {
-      this.isCrashed = true;
-    }
-  }
-
   private async refreshRateLimit(): Promise<void> {
     try {
       const currentLimit: RateLimitResponse = await API.getRateLimit();
@@ -127,29 +114,35 @@ export default class RequestIndicator extends Vue {
 
       this.$store.commit('setRequestCount', {
         type: 'search',
-        reset: convertTimeStampToDateTime(profileLimit.reset),
-        quantity: searchLimit.limit,
+        reset: convertTimeStampToDateTime(searchLimit.reset),
+        quantity: searchLimit.remaining,
       });
 
       this.$store.commit('setRequestCount', {
         type: 'profile',
         reset: convertTimeStampToDateTime(profileLimit.reset),
-        quantity: profileLimit.limit,
+        quantity: profileLimit.remaining,
       });
     } catch (error) {
       this.isCrashed = true;
     }
   }
 
-  @Watch('$store.state.requests.search.quantity')
-  @Watch('$store.state.requests.profile.quantity')
-  private async handleRequestCountEnd(): Promise<void> {
-    if (this.searchCount === 0) await this.refreshNextRequest('search');
-    if (this.searchCount === 0) await this.refreshNextRequest('profile');
+  private isRequestTimeIsUp(): boolean {
+    const currentDate: Date = new Date();
+
+    return (
+      currentDate.getTime() > this.nextSearchRequest.getTime() ||
+      currentDate.getTime() > this.nextProfileRequest.getTime()
+    );
   }
 
   async mounted(): Promise<void> {
-    await this.refreshRateLimit();
+    this.refreshRateLimit();
+
+    setInterval(async () => {
+      if (this.isRequestTimeIsUp()) await this.refreshRateLimit();
+    }, 5000);
   }
 }
 </script>
