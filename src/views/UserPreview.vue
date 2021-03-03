@@ -172,6 +172,18 @@ export default class UserPreview extends Vue {
     return this.$route.params.name;
   }
 
+  private activateViews(): void {
+    this.isRepoActive = true;
+    this.isFollowersActive = true;
+    this.isFollowedActive = true;
+  }
+
+  private deactivateViews(): void {
+    this.isRepoActive = false;
+    this.isFollowersActive = false;
+    this.isFollowedActive = false;
+  }
+
   private showError(title: string, message: string, redirection: string): void {
     this.isCrashed = true;
     this.errorTitle = title;
@@ -240,6 +252,7 @@ export default class UserPreview extends Vue {
   @Watch('$route.fullPath')
   private handleRouteChange(): void {
     this.loadData();
+    this.activateViews();
   }
 }
 </script>

@@ -88,7 +88,7 @@ export default class SearchResult extends Vue {
   private resultsCount: number = 0;
   private maxPage: number = 0;
   private perPageOptions: number[] = [10, 20, 30, 40, 50];
-  private order: string = 'asc';
+  private order: string = 'desc';
 
   private page: number = !isNaN(parseInt(this.$route.params.page))
     ? parseInt(this.$route.params.page)
