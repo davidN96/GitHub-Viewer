@@ -5,6 +5,7 @@ import store from './store';
 import '@/assets/styles/_reset.scss';
 import { unifyDate, unifyTime } from '@/utils/date';
 import ErrorModal from '@/components/ErrorModal/index.vue';
+import Loader from '@/components/Loader/index.vue';
 
 Vue.config.productionTip = false;
 
@@ -17,6 +18,7 @@ Vue.filter('unifyDate', (datetime: Date): string => unifyDate(datetime));
 Vue.filter('unifyTime', (datetime: Date): string => unifyTime(datetime));
 
 Vue.component('ErrorModal', ErrorModal);
+Vue.component('Loader', Loader);
 
 new Vue({
   router,

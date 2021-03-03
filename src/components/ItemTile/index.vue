@@ -1,5 +1,13 @@
 <template>
-  <div class="itemTileWrapper">
+  <router-link
+    class="itemTileWrapper"
+    :to="{
+      name: isRepo ? 'Repository' : 'User',
+      params: isRepo
+        ? { owner: item.owner.login, name: item.name }
+        : { name: item.login },
+    }"
+  >
     <div class="thumbnail">
       <img :src="item.avatar_url" alt="avatar" v-if="type === 'user'" />
       <div class="repoIcon" v-if="isRepo">
@@ -36,13 +44,13 @@
         </main>
       </div>
     </div>
-  </div>
+  </router-link>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import { User, Repository } from '@/controllers/api/types.ts';
-import { SearchMode } from '@/global.ts';
+import { User, Repository } from '@/controllers/api/types';
+import { SearchMode } from '@/global';
 
 @Component
 export default class ItemTile extends Vue {
@@ -82,6 +90,18 @@ export default class ItemTile extends Vue {
 
   &:hover {
     box-shadow: 0px 0px 5px 0px rgba(212, 212, 212, 0.2);
+
+    .thumbnail {
+      img {
+        box-shadow: 2px 2px 5px 2px rgba(43, 181, 75, 0.2);
+      }
+
+      .repoIcon {
+        i {
+          color: $green;
+        }
+      }
+    }
   }
 
   .thumbnail {
@@ -95,10 +115,12 @@ export default class ItemTile extends Vue {
       min-height: 40px;
       min-width: 40px;
       border-radius: $min-radius;
+      transition: 0.2s;
     }
 
     .repoIcon {
       i {
+        transition: 0.2s;
         font-size: 1.4rem;
       }
     }
@@ -138,6 +160,7 @@ export default class ItemTile extends Vue {
         text-align: center;
 
         h5 {
+          word-wrap: break-word;
           font-size: 0.6rem;
         }
       }
@@ -175,7 +198,7 @@ export default class ItemTile extends Vue {
             i {
               font-size: 0.8rem;
               margin: 0 10px;
-              color: $green;
+              color: $pink;
             }
           }
 
@@ -187,7 +210,7 @@ export default class ItemTile extends Vue {
 
           .lang {
             i {
-              color: #2979ff;
+              color: $blue;
             }
           }
         }

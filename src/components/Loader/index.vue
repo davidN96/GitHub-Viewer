@@ -1,5 +1,5 @@
 <template>
-  <div class="loaderWrapper">
+  <div class="loaderWrapper" :class="{ fadeIn: isActive, fadedOut: !isActive }">
     <LoaderIndicator />
     <h4 class="info">{{ title }}</h4>
   </div>
@@ -14,6 +14,7 @@ import LoaderIndicator from '@/components/LoaderIndicator/index.vue';
 })
 export default class Loader extends Vue {
   @Prop({ default: 'Fetching data...' }) private title!: string;
+  @Prop(Boolean) private isActive!: boolean;
 }
 </script>
 
@@ -29,6 +30,9 @@ export default class Loader extends Vue {
   left: 0;
   height: 100vh;
   width: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  transition: visibility 0.2s;
+  z-index: 11;
 
   .info {
     margin-top: 2vh;

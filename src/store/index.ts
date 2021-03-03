@@ -40,15 +40,19 @@ const store = new Store({
           return (requests.profile.quantity = quantity);
       }
     },
-    decrementRequestCount(state, type) {
+    decrementRequestCount(state, { type, quantity }) {
       const { requests } = state;
       switch (type) {
         case 'search':
-          if (requests.search.quantity > 0) requests.search.quantity--;
+          if (requests.search.quantity > 0)
+            requests.search.quantity -= quantity;
+          if (requests.search.quantity < 0) requests.search.quantity = 0;
           break;
 
         case 'profile':
-          if (requests.profile.quantity > 0) requests.profile.quantity--;
+          if (requests.profile.quantity > 0)
+            requests.profile.quantity -= quantity;
+          if (requests.profile.quantity < 0) requests.profile.quantity = 0;
           break;
       }
     },

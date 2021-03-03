@@ -15,6 +15,16 @@ export const routes: Array<RouteConfig> = [
     name: 'Search',
     component: () => import('@/views/SearchResults.vue'),
   },
+  {
+    path: '/preview/repo/:owner/:name',
+    name: 'Repository',
+    component: () => import('@/views/RepoPreview.vue'),
+  },
+  {
+    path: '/preview/user/:name',
+    name: 'User',
+    component: () => import('@/views/UserPreview.vue'),
+  },
 ];
 
 const router = new VueRouter({

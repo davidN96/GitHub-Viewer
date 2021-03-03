@@ -6,7 +6,7 @@
       :message="errorMessage"
       :redirectTo="errorRedirection"
     />
-    <Loader v-if="fetchingData" />
+    <Loader :isActive="fetchingData" />
     <div
       class="list"
       :class="{ fadedIn: !fetchingData, fadedOut: fetchingData }"
@@ -69,13 +69,12 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator';
-import { SearchMode } from '@/global.ts';
-import Loader from '@/components/Loader/index.vue';
+import { SearchMode } from '@/global';
 import ItemTile from '@/components/ItemTile/index.vue';
 import * as APITypes from '@/controllers/api/types';
 import API from '@/controllers/api';
 
-@Component({ components: { Loader, ItemTile } })
+@Component({ components: { ItemTile } })
 export default class SearchResult extends Vue {
   private fetchingData: boolean = true;
   private mode: string = this.$route.params.mode;
@@ -122,7 +121,10 @@ export default class SearchResult extends Vue {
   }
 
   private decrementRequestCount(): void {
-    this.$store.commit('decrementRequestCount', 'search');
+    this.$store.commit('decrementRequestCount', {
+      type: 'search',
+      quantity: 1,
+    });
   }
 
   private showLoader(): void {
@@ -168,7 +170,6 @@ export default class SearchResult extends Vue {
 
   private handleRequestFinish(): void {
     this.decrementRequestCount();
-
     this.hideLoader();
   }
 
@@ -199,7 +200,7 @@ export default class SearchResult extends Vue {
     this.$router.push({
       params: { ...this.$route.params, page: `${this.page}` },
     });
-    window.scrollTo(0, 0);
+    setTimeout(() => window.scrollTo(0, 0), 250);
   }
 
   @Watch('page')

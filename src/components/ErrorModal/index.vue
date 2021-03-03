@@ -45,7 +45,7 @@ export default class ErrorModal extends Vue {
 <style lang="scss" scoped>
 .errorModalWrapper {
   display: flex;
-  position: absolute;
+  position: fixed;
   z-index: 11;
   top: 0;
   left: 0;
