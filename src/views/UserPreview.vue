@@ -24,123 +24,39 @@
           </a>
         </header>
         <main>
-          <div class="repositories">
-            <header>
-              <h3>
-                Repositories
-              </h3>
-              <div class="control">
-                <div
-                  class="show"
-                  v-if="!isRepoActive"
-                  @click="isRepoActive = true"
-                >
-                  <i class="fas fa-plus"></i>
-                </div>
-                <div
-                  class="hide"
-                  v-if="isRepoActive"
-                  @click="isRepoActive = false"
-                >
-                  <i class="fas fa-minus"></i>
-                </div>
-              </div>
-            </header>
-            <div
-              class="container"
-              :class="{ rolled: !isRepoActive, unrolled: isRepoActive }"
-            >
-              <ItemTile
-                v-for="repo of repositories"
-                :key="repo.node_id"
-                :type="'repository'"
-                :item="repo"
-              />
-              <h4 v-if="repositories.length === 0">
-                No repositories found
-              </h4>
-            </div>
-          </div>
-          <div class="followers">
-            <header>
-              <h3>
-                Followers
-              </h3>
-              <div class="control">
-                <div
-                  class="show"
-                  v-if="!isFollowersActive"
-                  @click="isFollowersActive = true"
-                >
-                  <i class="fas fa-plus"></i>
-                </div>
-                <div
-                  class="hide"
-                  v-if="isFollowersActive"
-                  @click="isFollowersActive = false"
-                >
-                  <i class="fas fa-minus"></i>
-                </div>
-              </div>
-            </header>
-            <div
-              class="container"
-              :class="{
-                rolled: !isFollowersActive,
-                unrolled: isFollowersActive,
-              }"
-            >
-              <ItemTile
-                v-for="follower of followers"
-                :key="follower.node_id"
-                :type="'user'"
-                :item="follower"
-              />
-              <h4 v-if="followers.length === 0">
-                No followers found
-              </h4>
-            </div>
-          </div>
-          <div class="followed">
-            <header>
-              <h3>
-                Followed
-              </h3>
-              <div class="control">
-                <div
-                  class="show"
-                  v-if="!isFollowedActive"
-                  @click="isFollowedActive = true"
-                >
-                  <i class="fas fa-plus"></i>
-                </div>
-                <div
-                  class="hide"
-                  v-if="isFollowedActive"
-                  @click="isFollowedActive = false"
-                >
-                  <i class="fas fa-minus"></i>
-                </div>
-              </div>
-            </header>
-            <div
-              class="container"
-              :class="{
-                rolled: !isFollowedActive,
-                unrolled: isFollowedActive,
-              }"
-            >
-              <ItemTile
-                v-for="followedUser of followed"
-                :key="followedUser.node_id"
-                :type="'user'"
-                :item="followedUser"
-              />
-              <h4 v-if="followed.length === 0">
-                No followed users found
-              </h4>
-            </div>
-          </div>
+          <PreviewSection :title="'Repositories'">
+            <ItemTile
+              v-for="repo of repositories"
+              :key="repo.node_id"
+              :type="'repository'"
+              :item="repo"
+            />
+            <h4 v-if="repositories.length === 0">
+              No repositories found
+            </h4>
+          </PreviewSection>
+          <PreviewSection :title="'Followers'">
+            <ItemTile
+              v-for="follower of followers"
+              :key="follower.node_id"
+              :type="'user'"
+              :item="follower"
+            />
+            <h4 v-if="followers.length === 0">
+              No followers found
+            </h4>
+          </PreviewSection>
+          <PreviewSection :title="'Followed'">
+            <ItemTile
+              v-for="followedUser of followed"
+              :key="followedUser.node_id"
+              :type="'user'"
+              :item="followedUser"
+            />
+            <h4 v-if="followed.length === 0">
+              No followed users found
+            </h4>
+          </PreviewSection>
         </main>
       </div>
     </div>
@@ -150,10 +66,11 @@
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator';
 import ItemTile from '@/components/ItemTile/index.vue';
+import PreviewSection from '@/components/PreviewSection/index.vue';
 import * as APITypes from '@/controllers/api/types';
 import API from '@/controllers/api';
 
-@Component({ components: { ItemTile } })
+@Component({ components: { ItemTile, PreviewSection } })
 export default class UserPreview extends Vue {
   private user: APITypes.ExtendedUser | null = null;
   private repositories: APITypes.Repository[] = [];
@@ -320,60 +237,6 @@ export default class UserPreview extends Vue {
 
     main {
       padding: 0 0 10vh;
-
-      & > div {
-        display: flex;
-        width: 100%;
-        min-height: 60px;
-        background-color: $backgroudGray;
-        border-radius: $min-radius;
-        padding: 2vh 3vw;
-        margin-top: 10px;
-        flex-direction: column;
-
-        .container {
-          display: flex;
-          flex-wrap: wrap;
-          transition: 0.5s;
-          overflow: hidden;
-
-          h4 {
-            color: #8b949e;
-            font-weight: normal;
-          }
-        }
-
-        header {
-          display: flex;
-          align-items: center;
-          min-height: 60px;
-          width: 100%;
-          justify-content: space-between;
-
-          .control {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 30px;
-            width: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-
-            i {
-              font-size: 1.2rem;
-              transition: 0.2s;
-            }
-
-            &:hover {
-              background-color: $green;
-
-              i {
-                color: $darkGray;
-              }
-            }
-          }
-        }
-      }
     }
   }
 }
