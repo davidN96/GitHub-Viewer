@@ -17,6 +17,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import { Route } from 'vue-router';
 
 @Component
 export default class TopBar extends Vue {
@@ -24,8 +25,14 @@ export default class TopBar extends Vue {
     return this.$route.name !== 'Main';
   }
 
-  handleBack(): void {
-    this.$router.back();
+  handleBack(): Promise<Route> | void {
+    switch (this.$route.name) {
+      case 'Search':
+        return this.$router.push({ path: '/' });
+
+      default:
+        return this.$router.back();
+    }
   }
 }
 </script>

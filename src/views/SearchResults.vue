@@ -185,6 +185,8 @@ export default class SearchResult extends Vue {
       this.data = data.items;
       this.countPages();
 
+      if (data.total_count === 0) this.showError('Sorry', 'No results found');
+
       this.handleRequestFinish();
     } catch (error) {
       console.log(error);
@@ -277,7 +279,7 @@ export default class SearchResult extends Vue {
         #perPage,
         #sort,
         #order {
-          padding: 5px 10px;
+          padding: 5px;
           margin: 1vh 1vw;
           font-size: 0.75rem;
           background-color: transparent;

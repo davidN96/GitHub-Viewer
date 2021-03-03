@@ -99,7 +99,7 @@ export default class ItemTile extends Vue {
 
     .repoIcon {
       i {
-        font-size: 1.8rem;
+        font-size: 1.4rem;
       }
     }
   }
