@@ -6,6 +6,7 @@ import '@/assets/styles/_reset.scss';
 import { unifyDate, unifyTime } from '@/utils/date';
 import ErrorModal from '@/components/ErrorModal/index.vue';
 import Loader from '@/components/Loader/index.vue';
+import Paginator from '@/components/Paginator/index.vue';
 
 Vue.config.productionTip = false;
 
@@ -19,6 +20,7 @@ Vue.filter('unifyTime', (datetime: Date): string => unifyTime(datetime));
 
 Vue.component('ErrorModal', ErrorModal);
 Vue.component('Loader', Loader);
+Vue.component('Paginator', Paginator);
 
 new Vue({
   router,

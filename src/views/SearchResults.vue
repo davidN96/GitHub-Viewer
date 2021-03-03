@@ -55,14 +55,11 @@
         :key="item.node_id"
         :type="mode"
       />
-      <div class="paginator">
-        <button @click="page--" :disabled="page <= 1">
-          <i class="fas fa-chevron-circle-left"></i>
-        </button>
-        <button @click="page++" :disabled="page >= maxPage">
-          <i class="fas fa-chevron-circle-right"></i>
-        </button>
-      </div>
+      <Paginator
+        :page="page"
+        :eventName="'pageChange'"
+        @pageChange="handlePageChange"
+      />
     </div>
   </div>
 </template>
@@ -72,6 +69,7 @@ import { Vue, Component, Watch } from 'vue-property-decorator';
 import { SearchMode } from '@/global';
 import ItemTile from '@/components/ItemTile/index.vue';
 import * as APITypes from '@/controllers/api/types';
+import * as Search from '@/utils/search';
 import API from '@/controllers/api';
 
 @Component({ components: { ItemTile } })
@@ -89,10 +87,7 @@ export default class SearchResult extends Vue {
   private maxPage: number = 0;
   private perPageOptions: number[] = [10, 20, 30, 40, 50];
   private order: string = 'desc';
-
-  private page: number = !isNaN(parseInt(this.$route.params.page))
-    ? parseInt(this.$route.params.page)
-    : 1;
+  private page: number = parseInt(this.$route.params.page);
 
   private sortOptions: string[] =
     this.mode === SearchMode.user
@@ -104,22 +99,24 @@ export default class SearchResult extends Vue {
       ? APITypes.UserSortQuery.repositories
       : APITypes.RepositorySortQuery.stars;
 
+  private handlePageChange(type: string): void {
+    switch (type) {
+      case 'increment':
+        this.page += 1;
+        break;
+
+      case 'decrement':
+        this.page -= 1;
+        break;
+    }
+  }
+
   private get searchCount(): number {
     return this.$store.state.requests.search.count;
   }
 
   private get profileCount(): number {
     return this.$store.state.requests.profile.count;
-  }
-
-  private countPages(): void {
-    const results: number = this.resultsCount;
-    this.maxPage =
-      results % this.perPage === 0 || results < this.perPage
-        ? parseInt((results / this.perPage).toFixed())
-        : parseInt((results / this.perPage).toFixed()) + 1;
-
-    if (this.maxPage === 0) this.maxPage = 1;
   }
 
   private decrementRequestCount(): void {
@@ -184,18 +181,22 @@ export default class SearchResult extends Vue {
           ? await this.searchUser()
           : await this.searchRepository();
 
-      this.resultsCount = data.total_count >= 1000 ? 1000 : data.total_count;
+      this.resultsCount = Search.countResults(data.total_count, 1000);
       this.data = data.items;
-      this.countPages();
+      this.maxPage = Search.countPages(this.resultsCount, this.perPage);
 
       if (data.total_count === 0) this.showError('Sorry', 'No results found');
-
-      this.handleRequestFinish();
     } catch (error) {
-      console.log(error);
       if (error?.status === 403) this.showError('Sorry', 'API limit exceeded');
       else this.showError('Sorry', 'API error ocurred. Please refresh page');
+    } finally {
+      this.handleRequestFinish();
     }
+  }
+
+  private recalculatePages(): void {
+    this.page = Search.countPages(this.resultsCount, this.perPage);
+    if (this.page > this.maxPage) this.page = this.maxPage;
   }
 
   private changePage(): void {
@@ -213,8 +214,7 @@ export default class SearchResult extends Vue {
 
   @Watch('perPage')
   private async handlePerPageChange(): Promise<void> {
-    this.countPages();
-    if (this.page > this.maxPage) this.page = this.maxPage;
+    this.recalculatePages();
     this.handleSearch();
   }
 
