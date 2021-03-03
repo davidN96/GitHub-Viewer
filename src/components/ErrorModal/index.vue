@@ -49,7 +49,7 @@ export default class ErrorModal extends Vue {
   z-index: 11;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.7);
   justify-content: center;
@@ -59,7 +59,7 @@ export default class ErrorModal extends Vue {
 
   .errorModal {
     display: flex;
-    position: absolute;
+    position: fixed;
     flex-direction: column;
     top: 50%;
     left: 50%;

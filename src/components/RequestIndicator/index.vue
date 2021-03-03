@@ -150,23 +150,24 @@ export default class RequestIndicator extends Vue {
 <style lang="scss" scoped>
 .requestIndicatorWrapper {
   .requestIndicatorBackdrop {
-    position: absolute;
+    position: fixed;
+    display: flex;
     height: 100vh;
     width: 100vw;
     background-color: rgba(0, 0, 0, 0.7);
     z-index: 11;
     transition: visibility 0.2s;
     cursor: pointer;
+    justify-content: center;
+    align-items: center;
 
     .requestIndicatorModal {
       display: flex;
-      position: absolute;
+      flex: 1 1 500px;
+      max-width: 500px;
+      margin: 0 10vw;
       flex-direction: column;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
       background-color: $darkGray;
-      width: 80vw;
       min-height: 45vh;
       border-radius: 15px;
       justify-content: center;
@@ -174,10 +175,6 @@ export default class RequestIndicator extends Vue {
       transition: visibility 0.2s;
       padding: 5vh 2vw;
       text-align: center;
-
-      @include sm() {
-        width: 40vw;
-      }
 
       h3 {
         margin-bottom: 2vh;
@@ -197,8 +194,12 @@ export default class RequestIndicator extends Vue {
           display: flex;
           margin-top: 2vh;
           justify-content: space-around;
+          flex-wrap: wrap;
 
           .requestCount {
+            flex: 1 1 50%;
+            min-width: 100px;
+
             p {
               font-size: 0.7rem;
             }

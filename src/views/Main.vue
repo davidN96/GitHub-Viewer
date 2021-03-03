@@ -23,7 +23,7 @@
       <div class="mainLimitExceeded" v-if="limitExceeded">
         <h5>Search limit exceeded, try again later</h5>
       </div>
-      <router-link :to="`/search/${searchMode}/${keyWord}`">
+      <router-link :to="`/search/${searchMode}/${keyWord}/1`">
         <button :disabled="limitExceeded || keyWord.length < 3">
           <i class="fas fa-search"></i>
           Search

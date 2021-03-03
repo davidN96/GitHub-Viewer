@@ -11,7 +11,7 @@ export const routes: Array<RouteConfig> = [
     component: MainView,
   },
   {
-    path: '/search/:mode/:keyword',
+    path: '/search/:mode/:keyword/:page',
     name: 'Search',
     component: () => import('@/views/SearchResults.vue'),
   },

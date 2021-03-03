@@ -58,8 +58,8 @@ export interface FindUserParams {
   q: string;
   per_page: number;
   page: number;
-  sort: UserSortQuery;
-  order: Order;
+  sort: string;
+  order: string;
 }
 
 export interface License {
@@ -155,7 +155,6 @@ export interface ExtendedRepository extends Repository {
 export enum RepositorySortQuery {
   stars = 'stars',
   forks = 'forks',
-  helpWantedIssues = 'help_wanted_issues',
   updated = 'updated',
 }
 
@@ -163,8 +162,8 @@ export interface FindRepositoryParams {
   q: string;
   per_page: number;
   page: number;
-  sort: RepositorySortQuery;
-  order: Order;
+  sort: string;
+  order: string;
 }
 
 export interface FindRepositoryResponse {

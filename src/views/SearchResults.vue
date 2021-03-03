@@ -8,23 +8,74 @@
     />
     <Loader v-if="fetchingData" />
     <div
-      class="userList"
-      v-if="mode === 'user'"
+      class="list"
       :class="{ fadedIn: !fetchingData, fadedOut: fetchingData }"
     >
-      <UserTile v-for="user of data" :user="user" :key="user.login" />
+      <div class="filters">
+        <form>
+          <div>
+            <label for="perPage">Per page:</label>
+            <select id="perPage" v-model="perPage">
+              <option
+                v-for="number in perPageOptions"
+                :key="number"
+                :valie="number"
+                >{{ number }}</option
+              >
+            </select>
+          </div>
+          <div>
+            <label for="sort">Sort by:</label>
+            <select id="sort" v-model="sortBy">
+              <option
+                v-for="sortOption in sortOptions"
+                :value="sortOption"
+                :key="sortOption"
+                >{{ sortOption | capitalize }}</option
+              >
+            </select>
+          </div>
+          <div>
+            <label for="order">Order:</label>
+            <select id="order" v-model="order">
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
+          </div>
+        </form>
+        <div class="results">
+          <h5>Current page: {{ page }}</h5>
+          <h5>Pages: {{ maxPage }}</h5>
+          <h5>Results: {{ resultsCount }}</h5>
+        </div>
+      </div>
+      <ItemTile
+        v-for="item of data"
+        :item="item"
+        :key="item.node_id"
+        :type="mode"
+      />
+      <div class="paginator">
+        <button @click="page--" :disabled="page <= 1">
+          <i class="fas fa-chevron-circle-left"></i>
+        </button>
+        <button @click="page++" :disabled="page >= maxPage">
+          <i class="fas fa-chevron-circle-right"></i>
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Watch } from 'vue-property-decorator';
+import { SearchMode } from '@/global.ts';
 import Loader from '@/components/Loader/index.vue';
-import UserTile from '@/components/UserTile/index.vue';
+import ItemTile from '@/components/ItemTile/index.vue';
 import * as APITypes from '@/controllers/api/types';
 import API from '@/controllers/api';
 
-@Component({ components: { Loader, UserTile } })
+@Component({ components: { Loader, ItemTile } })
 export default class SearchResult extends Vue {
   private fetchingData: boolean = true;
   private mode: string = this.$route.params.mode;
@@ -35,8 +86,24 @@ export default class SearchResult extends Vue {
   private errorMessage: string = '';
   private errorRedirection: string = '';
   private perPage: number = 10;
-  private page: number = 1;
   private resultsCount: number = 0;
+  private maxPage: number = 0;
+  private perPageOptions: number[] = [10, 20, 30, 40, 50];
+  private order: string = 'asc';
+
+  private page: number = !isNaN(parseInt(this.$route.params.page))
+    ? parseInt(this.$route.params.page)
+    : 1;
+
+  private sortOptions: string[] =
+    this.mode === SearchMode.user
+      ? Object.values(APITypes.UserSortQuery)
+      : Object.keys(APITypes.RepositorySortQuery);
+
+  private sortBy: string =
+    this.mode === SearchMode.user
+      ? APITypes.UserSortQuery.repositories
+      : APITypes.RepositorySortQuery.stars;
 
   private get searchCount(): number {
     return this.$store.state.requests.search.count;
@@ -44,6 +111,14 @@ export default class SearchResult extends Vue {
 
   private get profileCount(): number {
     return this.$store.state.requests.profile.count;
+  }
+
+  private countPages(): void {
+    const results: number = this.resultsCount;
+    this.maxPage =
+      results % this.perPage === 0 || results < this.perPage
+        ? parseInt((results / this.perPage).toFixed())
+        : parseInt((results / this.perPage).toFixed()) + 1;
   }
 
   private decrementRequestCount(): void {
@@ -70,8 +145,8 @@ export default class SearchResult extends Vue {
       q: this.keyword,
       page: this.page,
       per_page: this.perPage,
-      order: APITypes.Order.asc,
-      sort: APITypes.UserSortQuery.joined,
+      order: this.order,
+      sort: this.sortBy,
     };
 
     const data: APITypes.FindUserResponse = await API.findUser(params);
@@ -84,30 +159,68 @@ export default class SearchResult extends Vue {
       q: this.keyword,
       page: this.page,
       per_page: this.perPage,
-      order: APITypes.Order.asc,
-      sort: APITypes.RepositorySortQuery.stars,
+      order: this.order,
+      sort: this.sortBy,
     };
 
     return await API.findRepository(params);
   }
 
-  async mounted(): Promise<void> {
+  private handleRequestFinish(): void {
     this.decrementRequestCount();
+
+    this.hideLoader();
+  }
+
+  private async handleSearch(): Promise<void> {
+    this.fetchingData = true;
 
     try {
       const data =
-        this.mode === 'user'
+        this.mode === SearchMode.user
           ? await this.searchUser()
           : await this.searchRepository();
 
-      this.resultsCount = data.total_count;
+      this.resultsCount = data.total_count >= 1000 ? 1000 : data.total_count;
       this.data = data.items;
-      this.hideLoader();
+      this.countPages();
+
+      this.handleRequestFinish();
     } catch (error) {
       console.log(error);
-      if (error.status === 403) this.showError('Sorry', 'API limit exceeded');
-      else this.showError('Sorry', 'API error ocurred');
+      if (error?.status === 403) this.showError('Sorry', 'API limit exceeded');
+      else this.showError('Sorry', 'API error ocurred. Please refresh page');
     }
+  }
+
+  private changePage(): void {
+    this.$router.push({
+      params: { ...this.$route.params, page: `${this.page}` },
+    });
+    window.scrollTo(0, 0);
+  }
+
+  @Watch('page')
+  private async handleFiltersChange(): Promise<void> {
+    this.handleSearch();
+    this.changePage();
+  }
+
+  @Watch('perPage')
+  private async handlePerPageChange(): Promise<void> {
+    this.countPages();
+    if (this.page > this.maxPage) this.page = this.maxPage;
+    this.handleSearch();
+  }
+
+  @Watch('sortBy')
+  @Watch('order')
+  private async handleSortChange(): Promise<void> {
+    this.handleSearch();
+  }
+
+  mounted(): void {
+    this.handleSearch();
   }
 }
 </script>
@@ -115,7 +228,6 @@ export default class SearchResult extends Vue {
 <style lang="scss" scoped>
 .searchResultsWrapper {
   display: flex;
-  width: 100vw;
   margin-top: 5vh;
   padding: 5vh 10vw;
   justify-content: center;
@@ -124,13 +236,122 @@ export default class SearchResult extends Vue {
     margin-top: 7vh;
   }
 
-  .userList {
+  .list {
     display: flex;
     justify-content: space-between;
     align-items: start;
     width: 100%;
     flex-wrap: wrap;
     max-width: $xl-min;
+
+    .filters {
+      display: flex;
+      width: 100%;
+      padding: 2vh 1.5vw;
+      margin: 2vh 0 3vh;
+      flex-wrap: wrap;
+
+      form {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        div {
+          display: flex;
+          align-items: center;
+          flex-direction: column;
+
+          @include md() {
+            flex-direction: row;
+          }
+        }
+
+        label {
+          font-size: 0.8rem;
+
+          @include md() {
+            font-size: 0.9rem;
+          }
+        }
+
+        #perPage,
+        #sort,
+        #order {
+          padding: 5px 10px;
+          margin: 1vh 1vw;
+          font-size: 0.75rem;
+          background-color: transparent;
+          border: 2px solid $white;
+          border-radius: $min-radius;
+          color: $white;
+          cursor: pointer;
+          transition: 0.2s;
+
+          @include md() {
+            font-size: 0.9rem;
+          }
+
+          &:hover {
+            color: $green;
+            border-color: $green;
+          }
+
+          option {
+            color: black;
+          }
+        }
+      }
+
+      .results {
+        display: flex;
+        width: 100%;
+
+        h5 {
+          margin: 5px 2vw 0 0;
+          font-size: 0.8rem;
+        }
+      }
+    }
+
+    .paginator {
+      display: flex;
+      width: 100%;
+      padding: 5vh 0 2vh;
+      justify-content: center;
+
+      button {
+        margin: 0 2vh;
+        cursor: pointer;
+        background-color: transparent;
+        outline: none;
+        border: none;
+        transition: 0.2s;
+
+        &:disabled {
+          opacity: 0.6;
+        }
+
+        &:disabled:hover {
+          transform: scale(1);
+          i {
+            color: $green;
+          }
+        }
+
+        &:hover {
+          transform: scale(1.2);
+
+          i {
+            color: $hoverGreen;
+          }
+        }
+
+        i {
+          font-size: 1.8rem;
+          color: $green;
+        }
+      }
+    }
   }
 }
 </style>

@@ -24,11 +24,11 @@ export default class Loader extends Vue {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
-  width: 100vw;
+  width: 100%;
 
   .info {
     margin-top: 2vh;
