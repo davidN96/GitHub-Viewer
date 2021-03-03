@@ -118,6 +118,8 @@ export default class SearchResult extends Vue {
       results % this.perPage === 0 || results < this.perPage
         ? parseInt((results / this.perPage).toFixed())
         : parseInt((results / this.perPage).toFixed()) + 1;
+
+    if (this.maxPage === 0) this.maxPage = 1;
   }
 
   private decrementRequestCount(): void {

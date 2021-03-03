@@ -334,7 +334,7 @@ export default class UserPreview extends Vue {
         .container {
           display: flex;
           flex-wrap: wrap;
-          transition: 1s;
+          transition: 0.5s;
           overflow: hidden;
 
           h4 {
