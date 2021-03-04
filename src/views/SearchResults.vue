@@ -15,6 +15,10 @@
         :perPageOptions="perPageOptions"
         :sortOptions="sortOptions"
         :results="resultsCount"
+        :sort="sortBy"
+        :order="order"
+        :perPage="perPage"
+        :type="'search'"
         @filtersChange="handleFiltersChange"
       />
       <ItemTile
@@ -26,6 +30,7 @@
       <Paginator
         :page="page"
         :maxPage="this.maxPage"
+        :type="'search'"
         @pageChange="handlePageChange"
       />
     </div>
@@ -55,7 +60,7 @@ export default class SearchResult extends Vue {
   private resultsCount: number = 0;
   private maxPage: number = 0;
   private perPageOptions: number[] = [10, 20, 30, 40, 50];
-  private order: string = 'desc';
+  private order: string = 'asc';
   private page: number = parseInt(this.$route.params.page);
 
   private sortOptions: string[] =
@@ -68,7 +73,7 @@ export default class SearchResult extends Vue {
       ? APITypes.UserSortQuery.repositories
       : APITypes.RepositorySortQuery.stars;
 
-  private handlePageChange(type: string): void {
+  private handlePageChange(mode: string, type: string): void {
     switch (type) {
       case 'increment':
         this.page += 1;
@@ -111,7 +116,7 @@ export default class SearchResult extends Vue {
   }
 
   private async searchUser(): Promise<APITypes.FindUserResponse> {
-    const params: APITypes.FindUserParams = {
+    const params: APITypes.FindUserFullParams = {
       q: this.keyword,
       page: this.page,
       per_page: this.perPage,
@@ -125,7 +130,7 @@ export default class SearchResult extends Vue {
   }
 
   private async searchRepository(): Promise<APITypes.FindRepositoryResponse> {
-    const params: APITypes.FindRepositoryParams = {
+    const params: APITypes.FindRepositoryFullParams = {
       q: this.keyword,
       page: this.page,
       per_page: this.perPage,
@@ -175,7 +180,10 @@ export default class SearchResult extends Vue {
     scrollTop(250);
   }
 
-  private handleFiltersChange({ sort, order, perPage }: SearchFilters): void {
+  private handleFiltersChange(
+    type: string,
+    { sort, order, perPage }: SearchFilters
+  ): void {
     this.sortBy = sort;
     this.order = order;
     this.perPage = perPage;
@@ -219,7 +227,7 @@ export default class SearchResult extends Vue {
   .list {
     display: flex;
     justify-content: space-between;
-    align-items: start;
+    align-items: flex-start;
     width: 100%;
     flex-wrap: wrap;
     max-width: $xl-min;

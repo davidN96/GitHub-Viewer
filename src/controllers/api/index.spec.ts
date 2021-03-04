@@ -8,6 +8,18 @@ import * as Types from './types';
 
 const defaultUser: string = 'davidN96';
 const defaultRepository: string = 'GitHub-Viewer';
+const userRequestParams: Types.FindUserParams = {
+  per_page: 5,
+  page: 1,
+  sort: Types.UserSortQuery.followers,
+  order: Types.Order.asc,
+};
+const repoRequestParams: Types.FindRepositoryParams = {
+  per_page: 5,
+  page: 1,
+  sort: Types.RepositorySortQuery.stars,
+  order: Types.Order.asc,
+};
 
 describe.skip('getUser()', () => {
   it('Shuld return users info', async () => {
@@ -28,7 +40,7 @@ describe.skip('getUser()', () => {
 
 describe.skip('findUser()', () => {
   it('Should find users with query', async () => {
-    const params: Types.FindUserParams = {
+    const params: Types.FindUserFullParams = {
       q: 'david',
       per_page: 5,
       page: 1,
@@ -57,7 +69,7 @@ describe.skip('getRepository()', () => {
 
 describe.skip('findRepository()', () => {
   it('Should find repository with query', async () => {
-    const params: Types.FindRepositoryParams = {
+    const params: Types.FindRepositoryFullParams = {
       q: 'GitHub',
       per_page: 5,
       page: 1,
@@ -76,7 +88,8 @@ describe.skip('findRepository()', () => {
 describe.skip('getUserRepositories()', () => {
   it('Should return users repositories', async () => {
     const repositories: Types.Repository[] = await GithubAPI.getUserRepositories(
-      defaultUser
+      defaultUser,
+      repoRequestParams
     );
 
     expect(repositories.length).toBeGreaterThan(1);
@@ -107,7 +120,8 @@ describe.skip('getUsersStarredProjects()', () => {
 describe.skip('getUserFollowers()', () => {
   it('Should return user followers list', async () => {
     const followers: Types.User[] = await GithubAPI.getUserFollowers(
-      defaultUser
+      defaultUser,
+      userRequestParams
     );
 
     expect(followers.length).toBeGreaterThan(0);
@@ -117,7 +131,8 @@ describe.skip('getUserFollowers()', () => {
 describe.skip('getFollowedByUser()', () => {
   it('Should return users followed by user', async () => {
     const followed: Types.User[] = await GithubAPI.getFollowedByUser(
-      defaultUser
+      defaultUser,
+      userRequestParams
     );
 
     expect(followed.length).toBeGreaterThan(0);

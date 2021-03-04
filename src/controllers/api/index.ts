@@ -21,7 +21,7 @@ export default class GithubAPI {
   }
 
   static async findUser(
-    params: Types.FindUserParams
+    params: Types.FindUserFullParams
   ): Promise<Types.FindUserResponse> {
     params.q = encodeURIComponent(params.q);
 
@@ -48,7 +48,7 @@ export default class GithubAPI {
   }
 
   static async findRepository(
-    params: Types.FindRepositoryParams
+    params: Types.FindRepositoryFullParams
   ): Promise<Types.FindRepositoryResponse> {
     params.q = encodeURIComponent(params.q);
 
@@ -61,12 +61,14 @@ export default class GithubAPI {
   }
 
   static async getUserRepositories(
-    username: string
+    username: string,
+    params: Types.FindRepositoryParams
   ): Promise<Types.Repository[]> {
     username = encodeURIComponent(username);
 
     const response: AxiosResponse<Types.Repository[]> = await API.get(
-      `/users/${username}/repos`
+      `/users/${username}/repos`,
+      { params }
     );
 
     return response.data;
@@ -98,21 +100,29 @@ export default class GithubAPI {
     return response.data;
   }
 
-  static async getUserFollowers(username: string): Promise<Types.User[]> {
+  static async getUserFollowers(
+    username: string,
+    params: Types.FindUserParams
+  ): Promise<Types.User[]> {
     username = encodeURIComponent(username);
 
     const response: AxiosResponse<Types.User[]> = await API.get(
-      `/users/${username}/followers`
+      `/users/${username}/followers`,
+      { params }
     );
 
     return response.data;
   }
 
-  static async getFollowedByUser(username: string): Promise<Types.User[]> {
+  static async getFollowedByUser(
+    username: string,
+    params: Types.FindUserParams
+  ): Promise<Types.User[]> {
     username = encodeURIComponent(username);
 
     const response: AxiosResponse<Types.User[]> = await API.get(
-      `/users/${username}/following`
+      `/users/${username}/following`,
+      { params }
     );
 
     return response.data;

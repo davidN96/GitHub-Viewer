@@ -55,11 +55,14 @@ export interface FindUserResponse {
 }
 
 export interface FindUserParams {
-  q: string;
   per_page: number;
   page: number;
   sort: string;
   order: string;
+}
+
+export interface FindUserFullParams extends FindUserParams {
+  q: string;
 }
 
 export interface License {
@@ -159,11 +162,14 @@ export enum RepositorySortQuery {
 }
 
 export interface FindRepositoryParams {
-  q: string;
   per_page: number;
   page: number;
   sort: string;
   order: string;
+}
+
+export interface FindRepositoryFullParams extends FindRepositoryParams {
+  q: string;
 }
 
 export interface FindRepositoryResponse {
