@@ -57,7 +57,7 @@ export default class SearchFilter extends Vue {
   @Watch('currentPerPage')
   @Watch('currentOrder')
   @Watch('currentSort')
-  private handleFiltersChange(): void {
+  private filtersChange(): void {
     this.$emit('filtersChange', {
       perPage: this.currentPerPage,
       sort: this.currentSort,

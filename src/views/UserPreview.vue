@@ -127,16 +127,16 @@
 </template>
 
 <script lang="ts">
-// import { Vue, Component, Watch } from 'vue-property-decorator';
-// import PreviewSection from '@/components/PreviewSection/index.vue';
-// import ItemTile from '@/components/ItemTile/index.vue';
+import { Vue, Component, Watch } from 'vue-property-decorator';
+import PreviewSection from '@/components/PreviewSection/index.vue';
+import ItemTile from '@/components/ItemTile/index.vue';
 // import API from '@/controllers/api';
 // import * as APITypes from '@/controllers/api/types';
 // import * as Utils from '@/utils/search';
 // import * as Custom from '@/global';
 
-// @Component({ components: { ItemTile, PreviewSection } })
-// export default class UserPreview extends Vue {
+@Component({ components: { ItemTile, PreviewSection } })
+export default class UserPreview extends Vue {}
 //   private requiredRequestCount: number = 4;
 //   private user: APITypes.ExtendedUser | null = null;
 //   private isFetching: boolean = true;
