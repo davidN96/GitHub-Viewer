@@ -57,8 +57,8 @@ export interface FindUserResponse {
 export interface FindUserParams {
   per_page: number;
   page: number;
-  sort: string;
-  order: string;
+  sort?: string;
+  order?: string;
 }
 
 export interface FindUserFullParams extends FindUserParams {
@@ -161,11 +161,19 @@ export enum RepositorySortQuery {
   updated = 'updated',
 }
 
+export enum UserRepoSortQuery {
+  created = 'created',
+  updated = 'updated',
+  pushed = 'pushed',
+  full_name = 'full_name',
+}
+
 export interface FindRepositoryParams {
   per_page: number;
   page: number;
   sort: string;
-  order: string;
+  order?: string;
+  direction?: string;
 }
 
 export interface FindRepositoryFullParams extends FindRepositoryParams {

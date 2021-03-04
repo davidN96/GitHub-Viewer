@@ -12,18 +12,18 @@
           >
         </select>
       </div>
-      <div>
+      <div v-if="sortOptions">
         <label for="sort">Sort by:</label>
         <select id="sort" v-model="currentSort">
           <option
             v-for="sortOption in sortOptions"
             :value="sortOption"
             :key="sortOption"
-            >{{ sortOption | capitalize }}</option
+            >{{ sortOption | removeSpecialChars | capitalize }}</option
           >
         </select>
       </div>
-      <div>
+      <div v-if="sortOptions">
         <label for="order">Order:</label>
         <select id="order" v-model="currentOrder">
           <option value="asc">Ascending</option>
@@ -31,11 +31,6 @@
         </select>
       </div>
     </form>
-    <div class="results">
-      <h5>Current page: {{ page }}</h5>
-      <h5>Pages: {{ maxPage }}</h5>
-      <h5>Results: {{ results }}</h5>
-    </div>
   </div>
 </template>
 
@@ -48,7 +43,7 @@ export default class SearchFilter extends Vue {
   @Prop() private readonly perPageOptions!: number[];
   @Prop() private readonly sortOptions!: string[];
   @Prop() private readonly results!: number;
-  @Prop() private readonly currentPage: number | undefined;
+  @Prop() private readonly currentPage!: number;
   @Prop() private readonly type!: string;
   @Prop() private sort!: string;
   @Prop() private order!: string;
@@ -85,7 +80,7 @@ export default class SearchFilter extends Vue {
   display: flex;
   width: 100%;
   padding: 2vh 1.5vw;
-  margin: 2vh 0 3vh;
+  margin: 2vh 0 1.5vh;
   flex-wrap: wrap;
 
   form {
@@ -136,16 +131,6 @@ export default class SearchFilter extends Vue {
       option {
         color: black;
       }
-    }
-  }
-
-  .results {
-    display: flex;
-    width: 100%;
-
-    h5 {
-      margin: 5px 2vw 0 0;
-      font-size: 0.8rem;
     }
   }
 }

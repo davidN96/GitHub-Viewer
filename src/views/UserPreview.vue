@@ -1,13 +1,13 @@
 <template>
   <div class="userPreviewWrapper">
-    <ErrorModal
+    <!-- <ErrorModal
       v-if="error.isActive"
       :title="error.title"
       :message="error.message"
       :redirectTo="error.redirection"
     />
-    <Loader :isActive="fetchingData" />
-    <div class="userPanelWrapper" v-if="!fetchingData">
+    <Loader :isActive="fetchingData" /> -->
+    <!-- <div class="userPanelWrapper" v-if="!fetchingData">
       <div
         class="userPanel"
         :class="{ fadeIn: !fetchingData, fadedOut: fetchingData }"
@@ -25,18 +25,6 @@
         </header>
         <main>
           <PreviewSection :title="'Repositories'">
-            <SearchFilters
-              v-if="repoFilters.results"
-              :perPageOptions="repoFilters.perPageOptions"
-              :sortOptions="repoFilters.sortOptions"
-              :results="repoFilters.results"
-              :currentPage="repoFilters.page"
-              :sort="repoFilters.sort"
-              :order="repoFilters.order"
-              :perPage="repoFilters.perPage"
-              :type="'repo'"
-              @filtersChange="handleFiltersChange"
-            />
             <ItemTile
               v-for="repo of repositories"
               :key="repo.node_id"
@@ -51,21 +39,10 @@
               :page="repoFilters.page"
               :maxPage="repoFilters.maxPage"
               :type="'repo'"
+              @pageChange="handlePageChange"
             />
           </PreviewSection>
           <PreviewSection :title="'Followers'">
-            <SearchFilters
-              v-if="followersFilters.results"
-              :perPageOptions="followersFilters.perPageOptions"
-              :sortOptions="followersFilters.sortOptions"
-              :results="followersFilters.results"
-              :currentPage="followersFilters.page"
-              :sort="followersFilters.sort"
-              :order="followersFilters.order"
-              :perPage="followersFilters.perPage"
-              :type="'followers'"
-              @filtersChange="handleFiltersChange"
-            />
             <ItemTile
               v-for="follower of followers"
               :key="follower.node_id"
@@ -80,21 +57,10 @@
               :page="followersFilters.page"
               :maxPage="followersFilters.maxPage"
               :type="'followers'"
+              @pageChange="handlePageChange"
             />
           </PreviewSection>
           <PreviewSection :title="'Followed'">
-            <SearchFilters
-              v-if="followedFilters.results"
-              :perPageOptions="followedFilters.perPageOptions"
-              :sortOptions="followedFilters.sortOptions"
-              :results="followedFilters.results"
-              :currentPage="followedFilters.page"
-              :sort="followedFilters.sort"
-              :order="followedFilters.order"
-              :perPage="followedFilters.perPage"
-              :type="'followed'"
-              @filtersChange="handleFiltersChange"
-            />
             <ItemTile
               v-for="followedUser of followed"
               :key="followedUser.node_id"
@@ -109,11 +75,12 @@
               :page="followedFilters.page"
               :maxPage="followedFilters.maxPage"
               :type="'followed'"
+              @pageChange="handlePageChange"
             />
           </PreviewSection>
         </main>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -122,10 +89,7 @@ import { Vue, Component, Watch } from 'vue-property-decorator';
 import ItemTile from '@/components/ItemTile/index.vue';
 import PreviewSection from '@/components/PreviewSection/index.vue';
 import * as APITypes from '@/controllers/api/types';
-import API from '@/controllers/api';
-import { SearchFiltersWithOptions, AppError } from '@/global';
-import { SearchFilters } from '@/global';
-import * as Search from '@/utils/search';
+import { AppError } from '@/global';
 
 @Component({ components: { ItemTile, PreviewSection } })
 export default class UserPreview extends Vue {
@@ -133,77 +97,21 @@ export default class UserPreview extends Vue {
   private repositories: APITypes.Repository[] = [];
   private followers: APITypes.User[] = [];
   private followed: APITypes.User[] = [];
-  private fetchingData: boolean = true;
+  private fetchingData: boolean = false;
   private isRepoActive: boolean = true;
   private isFollowersActive: boolean = true;
   private isFollowedActive: boolean = true;
+  private requiredRequestCount: number = 2;
 
   private error: AppError = {
     isActive: false,
     title: 'Sorry',
     message: 'Error ocurred',
-    redirection: 'null',
-  };
-
-  private repoFilters: SearchFiltersWithOptions = {
-    perPageOptions: [10, 20, 30, 40, 50],
-    sortOptions: [
-      APITypes.RepositorySortQuery.stars,
-      APITypes.RepositorySortQuery.forks,
-      APITypes.RepositorySortQuery.updated,
-    ],
-    page: 1,
-    perPage: 10,
-    maxPage: 1,
-    results: 0,
-    sort: APITypes.RepositorySortQuery.stars,
-    order: APITypes.Order.desc,
-  };
-
-  private followersFilters: SearchFiltersWithOptions = {
-    perPageOptions: [10, 20, 30, 40, 50],
-    sortOptions: [
-      APITypes.UserSortQuery.followers,
-      APITypes.UserSortQuery.repositories,
-      APITypes.UserSortQuery.joined,
-    ],
-    page: 1,
-    perPage: 10,
-    maxPage: 1,
-    results: 0,
-    sort: APITypes.UserSortQuery.repositories,
-    order: APITypes.Order.desc,
-  };
-
-  private followedFilters: SearchFiltersWithOptions = {
-    perPageOptions: [10, 20, 30, 40, 50],
-    sortOptions: [
-      APITypes.UserSortQuery.followers,
-      APITypes.UserSortQuery.repositories,
-      APITypes.UserSortQuery.joined,
-    ],
-    page: 1,
-    perPage: 10,
-    maxPage: 1,
-    results: 0,
-    sort: APITypes.UserSortQuery.repositories,
-    order: APITypes.Order.desc,
+    redirection: '',
   };
 
   private get name(): string {
     return this.$route.params.name;
-  }
-
-  private activateViews(): void {
-    this.isRepoActive = true;
-    this.isFollowersActive = true;
-    this.isFollowedActive = true;
-  }
-
-  private deactivateViews(): void {
-    this.isRepoActive = false;
-    this.isFollowersActive = false;
-    this.isFollowedActive = false;
   }
 
   private showError(title: string, message: string, redirection: string): void {
@@ -220,13 +128,13 @@ export default class UserPreview extends Vue {
   private handleRequestFinish(): void {
     this.$store.commit('decrementRequestCount', {
       type: 'profile',
-      quantity: 4,
+      quantity: 0,
     });
     this.hideLoader();
   }
 
   private checkRequestsCount(): void {
-    if (this.$store.state.requests.profile.quantity < 4)
+    if (this.$store.state.requests.profile.quantity < this.requiredRequestCount)
       this.showError(
         'Sorry',
         'API requests limit exceeded. Try again later',
@@ -239,162 +147,9 @@ export default class UserPreview extends Vue {
     this.fetchingData = true;
   }
 
-  private loadFilter(type: string, results: number) {
-    const resultsCount: number = Search.countResults(results, 1000);
-
-    switch (type) {
-      case 'repo':
-        this.repoFilters.results = resultsCount;
-        this.repoFilters.maxPage = Search.countPages(
-          results,
-          this.repoFilters.perPage
-        );
-        break;
-
-      case 'followers':
-        this.followersFilters.results = resultsCount;
-        this.followersFilters.maxPage = Search.countPages(
-          results,
-          this.followersFilters.perPage
-        );
-        break;
-
-      case 'followed':
-        this.followedFilters.results = resultsCount;
-        this.followedFilters.maxPage = Search.countPages(
-          results,
-          this.followedFilters.perPage
-        );
-        break;
-    }
-  }
-
-  private async loadData(type: string): Promise<void> {
-    this.prepareRequest();
-
-    try {
-      switch (type) {
-        case 'user':
-          this.user = await API.getUser(this.name);
-          this.loadFilter('repo', this.user.public_repos);
-          this.loadFilter('followers', this.user.followers);
-          this.loadFilter('followed', this.user.following);
-
-          break;
-
-        case 'repo':
-          this.repositories = await API.getUserRepositories(this.name, {
-            per_page: this.repoFilters.perPage,
-            page: this.repoFilters.page,
-            sort: this.repoFilters.sort,
-            order: this.repoFilters.order,
-          });
-
-          break;
-
-        case 'followers':
-          this.followers = await API.getUserFollowers(this.name, {
-            per_page: this.followersFilters.perPage,
-            page: this.followersFilters.page,
-            sort: this.followersFilters.sort,
-            order: this.followersFilters.order,
-          });
-          break;
-
-        case 'followed':
-          this.followed = await API.getFollowedByUser(this.name, {
-            per_page: this.followedFilters.perPage,
-            page: this.followedFilters.page,
-            sort: this.followedFilters.sort,
-            order: this.followedFilters.order,
-          });
-          break;
-      }
-    } catch (error) {
-      switch (error?.status) {
-        case 404:
-          this.showError('Sorry', 'User not found', '/');
-          break;
-
-        case 403:
-          this.showError(
-            'Sorry',
-            'API requests limit exceeded. Try again later',
-            '/'
-          );
-          break;
-
-        default:
-          this.showError('Sorry', 'Unexpected error ocurred. Try again', '/');
-          break;
-      }
-    } finally {
-      this.handleRequestFinish();
-    }
-  }
-
-  private async loadAllData(): Promise<void> {
-    await this.loadData('user');
-    await this.loadData('repo');
-    await this.loadData('followed');
-    await this.loadData('followers');
-  }
-
-  private async handleRepoFiltersChange(filters: SearchFilters): Promise<void> {
-    const { sort, order, perPage }: SearchFilters = filters;
-
-    await this.loadData('repo');
-  }
-
-  private async handlePageChange(mode: string, type: string) {
-    switch (type) {
-      case 'increment':
-        switch (mode) {
-          case 'repo':
-            this.repoFilters.page++;
-            break;
-
-          case 'followers':
-            this.repoFilters.page++;
-            break;
-
-          case 'followed':
-            this.repoFilters.page++;
-            break;
-        }
-        break;
-
-      case 'decrement':
-        switch (mode) {
-          case 'repo':
-            this.repoFilters.page--;
-            break;
-
-          case 'followers':
-            this.repoFilters.page--;
-            break;
-
-          case 'followed':
-            this.repoFilters.page--;
-            break;
-        }
-        break;
-    }
-  }
-
-  mounted(): void {
-    this.loadAllData();
-  }
-
   @Watch('$route.fullPath')
   private handleRouteChange(): void {
-    this.loadAllData();
-    this.activateViews();
-  }
-
-  @Watch('followersFilters.perPage')
-  private handleChanges() {
-    console.log('ASD');
+    console.log('Change route event');
   }
 }
 </script>

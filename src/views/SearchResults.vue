@@ -1,10 +1,10 @@
 <template>
   <div class="searchResultsWrapper">
     <ErrorModal
-      v-if="isCrashed"
-      :title="errorTitle"
-      :message="errorMessage"
-      :redirectTo="errorRedirection"
+      v-if="error.isActive"
+      :title="error.title"
+      :message="error.message"
+      :redirectTo="error.redirection"
     />
     <Loader :isActive="fetchingData" />
     <div
@@ -12,24 +12,29 @@
       :class="{ fadedIn: !fetchingData, fadedOut: fetchingData }"
     >
       <SearchFilters
-        :perPageOptions="perPageOptions"
-        :sortOptions="sortOptions"
-        :results="resultsCount"
-        :sort="sortBy"
-        :order="order"
-        :perPage="perPage"
+        :perPageOptions="searchFilterControl.perPageOptions"
+        :sortOptions="searchFilterControl.sortOptions"
+        :results="data.resultsCount"
+        :sort="searchFilters.sort"
+        :order="searchFilters.order"
+        :perPage="searchFilters.perPage"
         :type="'search'"
         @filtersChange="handleFiltersChange"
       />
+      <ResultsCounter
+        :results="data.resultsCount"
+        :page="searchPageControl.page"
+        :maxPage="searchPageControl.maxPage"
+      />
       <ItemTile
-        v-for="item of data"
+        v-for="item of data.results"
         :item="item"
         :key="item.node_id"
         :type="mode"
       />
       <Paginator
-        :page="page"
-        :maxPage="this.maxPage"
+        :page="searchPageControl.page"
+        :maxPage="searchPageControl.maxPage"
         :type="'search'"
         @pageChange="handlePageChange"
       />
@@ -39,48 +44,58 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator';
-import { SearchMode, SearchFilters } from '@/global';
-import ItemTile from '@/components/ItemTile/index.vue';
+import { scrollTop } from '@/utils/view';
+import * as SearchTypes from '@/global';
 import * as APITypes from '@/controllers/api/types';
 import * as Search from '@/utils/search';
+import ItemTile from '@/components/ItemTile/index.vue';
 import API from '@/controllers/api';
-import { scrollTop } from '@/utils/view';
 
 @Component({ components: { ItemTile } })
 export default class SearchResult extends Vue {
   private fetchingData: boolean = true;
   private mode: string = this.$route.params.mode;
   private keyword: string = this.$route.params.keyword;
-  private data: Array<APITypes.User | APITypes.Repository> = [];
-  private isCrashed: boolean = false;
-  private errorTitle: string = '';
-  private errorMessage: string = '';
-  private errorRedirection: string = '';
-  private perPage: number = 10;
-  private resultsCount: number = 0;
-  private maxPage: number = 0;
-  private perPageOptions: number[] = [10, 20, 30, 40, 50];
-  private order: string = 'asc';
-  private page: number = parseInt(this.$route.params.page);
 
-  private sortOptions: string[] =
-    this.mode === SearchMode.user
-      ? Object.values(APITypes.UserSortQuery)
-      : Object.keys(APITypes.RepositorySortQuery);
+  private error: SearchTypes.AppError = {
+    isActive: false,
+    title: 'Sorry',
+    message: 'Error ocurred',
+    redirection: '',
+  };
 
-  private sortBy: string =
-    this.mode === SearchMode.user
-      ? APITypes.UserSortQuery.repositories
-      : APITypes.RepositorySortQuery.stars;
+  private data: SearchTypes.SearchResults = {
+    results: [],
+    resultsCount: 0,
+  };
+
+  private searchPageControl: SearchTypes.SearchResultControl = {
+    page: parseInt(this.$route.params.page),
+    maxPage: 1,
+  };
+
+  private searchFilterControl: SearchTypes.SearchFilterControl = {
+    sortOptions:
+      this.mode === SearchTypes.SearchMode.user
+        ? SearchTypes.userSortOptions
+        : SearchTypes.repoSortOptions,
+    perPageOptions: SearchTypes.perPageOptions,
+  };
+
+  private searchFilters: SearchTypes.ExtendedSearchFilters = {
+    perPage: SearchTypes.perPageOptions[0],
+    sort: this.searchFilterControl.sortOptions[0],
+    order: APITypes.Order.desc,
+  };
 
   private handlePageChange(mode: string, type: string): void {
     switch (type) {
       case 'increment':
-        this.page += 1;
+        this.searchPageControl.page += 1;
         break;
 
       case 'decrement':
-        this.page -= 1;
+        this.searchPageControl.page -= 1;
         break;
     }
   }
@@ -109,19 +124,19 @@ export default class SearchResult extends Vue {
   }
 
   private showError(title: string, message: string): void {
-    this.isCrashed = true;
-    this.errorTitle = title;
-    this.errorMessage = message;
-    this.errorRedirection = '/';
+    this.error.isActive = true;
+    this.error.title = title;
+    this.error.message = message;
+    this.error.redirection = '/';
   }
 
   private async searchUser(): Promise<APITypes.FindUserResponse> {
     const params: APITypes.FindUserFullParams = {
       q: this.keyword,
-      page: this.page,
-      per_page: this.perPage,
-      order: this.order,
-      sort: this.sortBy,
+      page: this.searchPageControl.page,
+      per_page: this.searchFilters.perPage,
+      order: this.searchFilters.order,
+      sort: this.searchFilters.sort,
     };
 
     const data: APITypes.FindUserResponse = await API.findUser(params);
@@ -132,10 +147,10 @@ export default class SearchResult extends Vue {
   private async searchRepository(): Promise<APITypes.FindRepositoryResponse> {
     const params: APITypes.FindRepositoryFullParams = {
       q: this.keyword,
-      page: this.page,
-      per_page: this.perPage,
-      order: this.order,
-      sort: this.sortBy,
+      page: this.searchPageControl.page,
+      per_page: this.searchFilters.perPage,
+      order: this.searchFilters.order,
+      sort: this.searchFilters.sort,
     };
 
     return await API.findRepository(params);
@@ -151,13 +166,16 @@ export default class SearchResult extends Vue {
 
     try {
       const data =
-        this.mode === SearchMode.user
+        this.mode === SearchTypes.SearchMode.user
           ? await this.searchUser()
           : await this.searchRepository();
 
-      this.resultsCount = Search.countResults(data.total_count, 1000);
-      this.data = data.items;
-      this.maxPage = Search.countPages(this.resultsCount, this.perPage);
+      this.data.resultsCount = Search.countResults(data.total_count, 1000);
+      this.data.results = data.items;
+      this.searchPageControl.maxPage = Search.countPages(
+        this.data.resultsCount,
+        this.searchFilters.perPage
+      );
 
       if (data.total_count === 0) this.showError('Sorry', 'No results found');
     } catch (error) {
@@ -169,41 +187,40 @@ export default class SearchResult extends Vue {
   }
 
   private recalculatePages(): void {
-    this.maxPage = Search.countPages(this.resultsCount, this.perPage);
-    if (this.page > this.maxPage) this.page = this.maxPage;
+    this.searchPageControl.maxPage = Search.countPages(
+      this.data.resultsCount,
+      this.searchFilters.perPage
+    );
+    if (this.searchPageControl.page > this.searchPageControl.maxPage)
+      this.searchPageControl.page = this.searchPageControl.maxPage;
   }
 
   private changePage(): void {
     this.$router.push({
-      params: { ...this.$route.params, page: `${this.page}` },
+      params: { ...this.$route.params, page: `${this.searchPageControl.page}` },
     });
     scrollTop(250);
   }
 
   private handleFiltersChange(
     type: string,
-    { sort, order, perPage }: SearchFilters
+    params: SearchTypes.ExtendedSearchFilters
   ): void {
-    this.sortBy = sort;
-    this.order = order;
-    this.perPage = perPage;
+    this.searchFilters.sort = params.sort;
+    this.searchFilters.order = params.order;
+    this.searchFilters.perPage = params.perPage;
   }
 
-  @Watch('page')
+  @Watch('searchPageControl.page')
   private async handlPageChange(): Promise<void> {
+    console.log('Here');
     this.handleSearch();
     this.changePage();
   }
 
-  @Watch('perPage')
+  @Watch('searchFilters', { deep: true })
   private async handlePerPageChange(): Promise<void> {
     this.recalculatePages();
-    this.handleSearch();
-  }
-
-  @Watch('sortBy')
-  @Watch('order')
-  private async handleSortChange(): Promise<void> {
     this.handleSearch();
   }
 
