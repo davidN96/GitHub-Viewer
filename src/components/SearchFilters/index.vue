@@ -12,7 +12,7 @@
           >
         </select>
       </div>
-      <div v-if="sortOptions">
+      <div v-if="sortOptions.length">
         <label for="sort">Sort by:</label>
         <select id="sort" v-model="currentSort">
           <option
@@ -23,11 +23,15 @@
           >
         </select>
       </div>
-      <div v-if="sortOptions">
+      <div v-if="orderOptions.length">
         <label for="order">Order:</label>
         <select id="order" v-model="currentOrder">
-          <option value="asc">Ascending</option>
-          <option value="desc">Descending</option>
+          <option
+            v-for="option in orderOptions"
+            :key="option"
+            :value="option"
+            >{{ option | capitalize }}</option
+          >
         </select>
       </div>
     </form>
@@ -36,15 +40,12 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
-import * as Search from '@/utils/search';
 
 @Component
 export default class SearchFilter extends Vue {
   @Prop() private readonly perPageOptions!: number[];
   @Prop() private readonly sortOptions!: string[];
-  @Prop() private readonly results!: number;
-  @Prop() private readonly currentPage!: number;
-  @Prop() private readonly type!: string;
+  @Prop() private readonly orderOptions!: string[];
   @Prop() private sort!: string;
   @Prop() private order!: string;
   @Prop() private perPage!: number;
@@ -53,20 +54,11 @@ export default class SearchFilter extends Vue {
   private currentOrder: string = this.order;
   private currentPerPage: number = this.perPage;
 
-  private get page(): number {
-    if (this.currentPage) return this.currentPage;
-    else return parseInt(this.$route.params.page);
-  }
-
-  private get maxPage(): number {
-    return Search.countPages(this.results, this.perPage);
-  }
-
   @Watch('currentPerPage')
   @Watch('currentOrder')
   @Watch('currentSort')
   private handleFiltersChange(): void {
-    this.$emit('filtersChange', this.type, {
+    this.$emit('filtersChange', {
       perPage: this.currentPerPage,
       sort: this.currentSort,
       order: this.currentOrder,

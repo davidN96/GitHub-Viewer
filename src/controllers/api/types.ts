@@ -55,7 +55,7 @@ export interface FindUserResponse {
 }
 
 export interface FindUserParams {
-  per_page: number;
+  perPage: number;
   page: number;
   sort?: string;
   order?: string;
@@ -169,7 +169,7 @@ export enum UserRepoSortQuery {
 }
 
 export interface FindRepositoryParams {
-  per_page: number;
+  perPage: number;
   page: number;
   sort: string;
   order?: string;

@@ -19,11 +19,11 @@ export default class Paginator extends Vue {
   @Prop() readonly type!: string;
 
   private handleNextPage(): void {
-    this.$emit('pageChange', this.type, 'increment');
+    this.$emit('pageChange', this.page + 1);
   }
 
   private handlePrevPage(): void {
-    this.$emit('pageChange', this.type, 'decrement');
+    this.$emit('pageChange', this.page - 1);
   }
 }
 </script>

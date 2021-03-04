@@ -8,9 +8,14 @@ export enum SearchMode {
 export interface SearchResults {
   results: Array<APITypes.User | APITypes.Repository>;
   resultsCount: number;
+  isFetching: boolean;
 }
 
-export interface SearchResultControl {
+export interface GetUserResult {
+  data: APITypes.ExtendedUser | undefined;
+}
+
+export interface SearchPageControl {
   page: number;
   maxPage: number;
 }
@@ -25,8 +30,12 @@ export interface ExtendedSearchFilters extends SearchFilters {
 }
 
 export interface SearchFilterControl {
-  sortOptions: string[];
   perPageOptions: number[];
+}
+
+export interface ExtendedSearchFilterControl extends SearchFilterControl {
+  sortOptions: string[];
+  orderOptions: string[];
 }
 
 export interface AppError {

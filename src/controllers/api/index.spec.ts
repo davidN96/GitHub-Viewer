@@ -9,13 +9,13 @@ import * as Types from './types';
 const defaultUser: string = 'davidN96';
 const defaultRepository: string = 'GitHub-Viewer';
 const userRequestParams: Types.FindUserParams = {
-  per_page: 5,
+  perPage: 5,
   page: 1,
   sort: Types.UserSortQuery.followers,
   order: Types.Order.asc,
 };
 const repoRequestParams: Types.FindRepositoryParams = {
-  per_page: 5,
+  perPage: 5,
   page: 1,
   sort: Types.RepositorySortQuery.stars,
   order: Types.Order.asc,
@@ -42,7 +42,7 @@ describe.skip('findUser()', () => {
   it('Should find users with query', async () => {
     const params: Types.FindUserFullParams = {
       q: 'david',
-      per_page: 5,
+      perPage: 5,
       page: 1,
       sort: Types.UserSortQuery.joined,
       order: Types.Order.asc,
@@ -52,7 +52,7 @@ describe.skip('findUser()', () => {
       params
     );
 
-    expect(searchResult.items.length).toBe(params.per_page);
+    expect(searchResult.items.length).toBe(params.perPage);
   });
 });
 
@@ -71,7 +71,7 @@ describe.skip('findRepository()', () => {
   it('Should find repository with query', async () => {
     const params: Types.FindRepositoryFullParams = {
       q: 'GitHub',
-      per_page: 5,
+      perPage: 5,
       page: 1,
       sort: Types.RepositorySortQuery.stars,
       order: Types.Order.asc,
@@ -81,7 +81,7 @@ describe.skip('findRepository()', () => {
       params
     );
 
-    expect(searchResult.items.length).toBe(params.per_page);
+    expect(searchResult.items.length).toBe(params.perPage);
   });
 });
 

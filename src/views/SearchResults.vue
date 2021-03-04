@@ -6,19 +6,19 @@
       :message="error.message"
       :redirectTo="error.redirection"
     />
-    <Loader :isActive="fetchingData" />
+    <Loader :isActive="data.isFetching" />
     <div
       class="list"
-      :class="{ fadedIn: !fetchingData, fadedOut: fetchingData }"
+      :class="{ fadedIn: !data.isFetching, fadedOut: data.isFetching }"
     >
       <SearchFilters
         :perPageOptions="searchFilterControl.perPageOptions"
         :sortOptions="searchFilterControl.sortOptions"
+        :orderOptions="searchFilterControl.orderOptions"
         :results="data.resultsCount"
         :sort="searchFilters.sort"
         :order="searchFilters.order"
         :perPage="searchFilters.perPage"
-        :type="'search'"
         @filtersChange="handleFiltersChange"
       />
       <ResultsCounter
@@ -35,7 +35,6 @@
       <Paginator
         :page="searchPageControl.page"
         :maxPage="searchPageControl.maxPage"
-        :type="'search'"
         @pageChange="handlePageChange"
       />
     </div>
@@ -53,7 +52,6 @@ import API from '@/controllers/api';
 
 @Component({ components: { ItemTile } })
 export default class SearchResult extends Vue {
-  private fetchingData: boolean = true;
   private mode: string = this.$route.params.mode;
   private keyword: string = this.$route.params.keyword;
 
@@ -67,19 +65,21 @@ export default class SearchResult extends Vue {
   private data: SearchTypes.SearchResults = {
     results: [],
     resultsCount: 0,
+    isFetching: true,
   };
 
-  private searchPageControl: SearchTypes.SearchResultControl = {
+  private searchPageControl: SearchTypes.SearchPageControl = {
     page: parseInt(this.$route.params.page),
     maxPage: 1,
   };
 
-  private searchFilterControl: SearchTypes.SearchFilterControl = {
+  private searchFilterControl: SearchTypes.ExtendedSearchFilterControl = {
     sortOptions:
       this.mode === SearchTypes.SearchMode.user
         ? SearchTypes.userSortOptions
         : SearchTypes.repoSortOptions,
     perPageOptions: SearchTypes.perPageOptions,
+    orderOptions: SearchTypes.orderOptions,
   };
 
   private searchFilters: SearchTypes.ExtendedSearchFilters = {
@@ -88,16 +88,8 @@ export default class SearchResult extends Vue {
     order: APITypes.Order.desc,
   };
 
-  private handlePageChange(mode: string, type: string): void {
-    switch (type) {
-      case 'increment':
-        this.searchPageControl.page += 1;
-        break;
-
-      case 'decrement':
-        this.searchPageControl.page -= 1;
-        break;
-    }
+  private handlePageChange(page: number): void {
+    this.searchPageControl.page = page;
   }
 
   private get searchCount(): number {
@@ -116,27 +108,27 @@ export default class SearchResult extends Vue {
   }
 
   private showLoader(): void {
-    this.fetchingData = true;
+    this.data.isFetching = true;
   }
 
   private hideLoader(): void {
-    setTimeout(() => (this.fetchingData = false), 300);
+    setTimeout(() => (this.data.isFetching = false), 300);
   }
 
   private showError(title: string, message: string): void {
-    this.error.isActive = true;
-    this.error.title = title;
-    this.error.message = message;
-    this.error.redirection = '/';
+    this.error = {
+      title,
+      message,
+      isActive: true,
+      redirection: '/',
+    };
   }
 
   private async searchUser(): Promise<APITypes.FindUserResponse> {
     const params: APITypes.FindUserFullParams = {
       q: this.keyword,
       page: this.searchPageControl.page,
-      per_page: this.searchFilters.perPage,
-      order: this.searchFilters.order,
-      sort: this.searchFilters.sort,
+      ...this.searchFilters,
     };
 
     const data: APITypes.FindUserResponse = await API.findUser(params);
@@ -148,9 +140,7 @@ export default class SearchResult extends Vue {
     const params: APITypes.FindRepositoryFullParams = {
       q: this.keyword,
       page: this.searchPageControl.page,
-      per_page: this.searchFilters.perPage,
-      order: this.searchFilters.order,
-      sort: this.searchFilters.sort,
+      ...this.searchFilters,
     };
 
     return await API.findRepository(params);
@@ -162,7 +152,7 @@ export default class SearchResult extends Vue {
   }
 
   private async handleSearch(): Promise<void> {
-    this.fetchingData = true;
+    this.data.isFetching = true;
 
     try {
       const data =
@@ -202,18 +192,12 @@ export default class SearchResult extends Vue {
     scrollTop(250);
   }
 
-  private handleFiltersChange(
-    type: string,
-    params: SearchTypes.ExtendedSearchFilters
-  ): void {
-    this.searchFilters.sort = params.sort;
-    this.searchFilters.order = params.order;
-    this.searchFilters.perPage = params.perPage;
+  private handleFiltersChange(params: SearchTypes.ExtendedSearchFilters): void {
+    this.searchFilters = params;
   }
 
   @Watch('searchPageControl.page')
   private async handlPageChange(): Promise<void> {
-    console.log('Here');
     this.handleSearch();
     this.changePage();
   }
