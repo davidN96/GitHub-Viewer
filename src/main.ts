@@ -7,6 +7,7 @@ import { unifyDate, unifyTime } from '@/utils/date';
 import ErrorModal from '@/components/ErrorModal/index.vue';
 import Loader from '@/components/Loader/index.vue';
 import Paginator from '@/components/Paginator/index.vue';
+import SearchFilters from '@/components/SearchFilters/index.vue';
 
 Vue.config.productionTip = false;
 
@@ -21,6 +22,7 @@ Vue.filter('unifyTime', (datetime: Date): string => unifyTime(datetime));
 Vue.component('ErrorModal', ErrorModal);
 Vue.component('Loader', Loader);
 Vue.component('Paginator', Paginator);
+Vue.component('SearchFilters', SearchFilters);
 
 new Vue({
   router,

@@ -34,6 +34,7 @@
             <h4 v-if="repositories.length === 0">
               No repositories found
             </h4>
+            <Paginator :page="1" :maxPage="3" eventName="'followers'" />
           </PreviewSection>
           <PreviewSection :title="'Followers'">
             <ItemTile
@@ -45,6 +46,7 @@
             <h4 v-if="followers.length === 0">
               No followers found
             </h4>
+            <Paginator :page="1" :maxPage="3" eventName="'followers'" />
           </PreviewSection>
           <PreviewSection :title="'Followed'">
             <ItemTile
@@ -56,6 +58,7 @@
             <h4 v-if="followed.length === 0">
               No followed users found
             </h4>
+            <Paginator :page="1" :maxPage="3" eventName="'followers'" />
           </PreviewSection>
         </main>
       </div>

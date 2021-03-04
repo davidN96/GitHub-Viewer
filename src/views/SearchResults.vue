@@ -11,44 +11,12 @@
       class="list"
       :class="{ fadedIn: !fetchingData, fadedOut: fetchingData }"
     >
-      <div class="filters">
-        <form>
-          <div>
-            <label for="perPage">Per page:</label>
-            <select id="perPage" v-model="perPage">
-              <option
-                v-for="number in perPageOptions"
-                :key="number"
-                :valie="number"
-                >{{ number }}</option
-              >
-            </select>
-          </div>
-          <div>
-            <label for="sort">Sort by:</label>
-            <select id="sort" v-model="sortBy">
-              <option
-                v-for="sortOption in sortOptions"
-                :value="sortOption"
-                :key="sortOption"
-                >{{ sortOption | capitalize }}</option
-              >
-            </select>
-          </div>
-          <div>
-            <label for="order">Order:</label>
-            <select id="order" v-model="order">
-              <option value="asc">Ascending</option>
-              <option value="desc">Descending</option>
-            </select>
-          </div>
-        </form>
-        <div class="results">
-          <h5>Current page: {{ page }}</h5>
-          <h5>Pages: {{ maxPage }}</h5>
-          <h5>Results: {{ resultsCount }}</h5>
-        </div>
-      </div>
+      <SearchFilters
+        :perPageOptions="perPageOptions"
+        :sortOptions="sortOptions"
+        :results="resultsCount"
+        @filtersChange="handleFiltersChange"
+      />
       <ItemTile
         v-for="item of data"
         :item="item"
@@ -57,7 +25,7 @@
       />
       <Paginator
         :page="page"
-        :eventName="'pageChange'"
+        :maxPage="this.maxPage"
         @pageChange="handlePageChange"
       />
     </div>
@@ -66,11 +34,12 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator';
-import { SearchMode } from '@/global';
+import { SearchMode, SearchFilters } from '@/global';
 import ItemTile from '@/components/ItemTile/index.vue';
 import * as APITypes from '@/controllers/api/types';
 import * as Search from '@/utils/search';
 import API from '@/controllers/api';
+import { scrollTop } from '@/utils/view';
 
 @Component({ components: { ItemTile } })
 export default class SearchResult extends Vue {
@@ -195,7 +164,7 @@ export default class SearchResult extends Vue {
   }
 
   private recalculatePages(): void {
-    this.page = Search.countPages(this.resultsCount, this.perPage);
+    this.maxPage = Search.countPages(this.resultsCount, this.perPage);
     if (this.page > this.maxPage) this.page = this.maxPage;
   }
 
@@ -203,11 +172,17 @@ export default class SearchResult extends Vue {
     this.$router.push({
       params: { ...this.$route.params, page: `${this.page}` },
     });
-    setTimeout(() => window.scrollTo(0, 0), 250);
+    scrollTop(250);
+  }
+
+  private handleFiltersChange({ sort, order, perPage }: SearchFilters): void {
+    this.sortBy = sort;
+    this.order = order;
+    this.perPage = perPage;
   }
 
   @Watch('page')
-  private async handleFiltersChange(): Promise<void> {
+  private async handlPageChange(): Promise<void> {
     this.handleSearch();
     this.changePage();
   }
@@ -248,75 +223,6 @@ export default class SearchResult extends Vue {
     width: 100%;
     flex-wrap: wrap;
     max-width: $xl-min;
-
-    .filters {
-      display: flex;
-      width: 100%;
-      padding: 2vh 1.5vw;
-      margin: 2vh 0 3vh;
-      flex-wrap: wrap;
-
-      form {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        div {
-          display: flex;
-          align-items: center;
-          flex-direction: column;
-
-          @include md() {
-            flex-direction: row;
-          }
-        }
-
-        label {
-          font-size: 0.8rem;
-
-          @include md() {
-            font-size: 0.9rem;
-          }
-        }
-
-        #perPage,
-        #sort,
-        #order {
-          padding: 5px;
-          margin: 1vh 1vw;
-          font-size: 0.75rem;
-          background-color: transparent;
-          border: 2px solid $white;
-          border-radius: $min-radius;
-          color: $white;
-          cursor: pointer;
-          transition: 0.2s;
-
-          @include md() {
-            font-size: 0.9rem;
-          }
-
-          &:hover {
-            color: $green;
-            border-color: $green;
-          }
-
-          option {
-            color: black;
-          }
-        }
-      }
-
-      .results {
-        display: flex;
-        width: 100%;
-
-        h5 {
-          margin: 5px 2vw 0 0;
-          font-size: 0.8rem;
-        }
-      }
-    }
 
     .paginator {
       display: flex;

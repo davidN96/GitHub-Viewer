@@ -10,20 +10,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 
 @Component
 export default class Paginator extends Vue {
   @Prop() readonly page!: number;
   @Prop() readonly maxPage!: number;
-  @Prop() readonly eventName!: string;
 
   private handleNextPage(): void {
-    this.$emit(this.eventName, 'increment');
+    this.$emit('pageChange', 'increment');
   }
 
   private handlePrevPage(): void {
-    this.$emit(this.eventName, 'decrement');
+    this.$emit('pageChange', 'decrement');
   }
 }
 </script>
