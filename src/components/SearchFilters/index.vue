@@ -1,6 +1,6 @@
 <template>
   <div class="searchFilterWrapper">
-    <form>
+    <form v-if="!(disableFilters === true)">
       <div>
         <label for="perPage">Per page:</label>
         <select id="perPage" v-model="currentPerPage">
@@ -49,6 +49,7 @@ export default class SearchFilter extends Vue {
   @Prop() private sort!: string;
   @Prop() private order!: string;
   @Prop() private perPage!: number;
+  @Prop() private readonly disableFilters!: boolean;
 
   private currentSort: string = this.sort;
   private currentOrder: string = this.order;

@@ -77,7 +77,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from 'vue-property-decorator';
+import { Vue, Component } from 'vue-property-decorator';
 import { RateLimitResponse, RateLimit } from '@/controllers/api/types';
 import { convertTimeStampToDateTime } from '@/utils/date';
 import API from '@/controllers/api';

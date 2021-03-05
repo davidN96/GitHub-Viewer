@@ -83,11 +83,11 @@ export default class GithubAPI {
   static async getRepositoryContributors(
     owner: string,
     repository: string
-  ): Promise<Types.Contributor[]> {
+  ): Promise<Types.User[]> {
     owner = encodeURIComponent(owner);
     repository = encodeURIComponent(repository);
 
-    const response: AxiosResponse<Types.Contributor[]> = await API.get(
+    const response: AxiosResponse<Types.User[]> = await API.get(
       `/repos/${owner}/${repository}/contributors`
     );
 

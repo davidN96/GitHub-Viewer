@@ -6,6 +6,7 @@
       :orderOptions="orderOptions"
       :sort="filters.sort"
       :sortOptions="sortOptions"
+      :disableFilters="disableFilters"
       @filtersChange="filtersChange"
       v-if="resultsCount"
     />
@@ -13,7 +14,7 @@
       :results="resultsCount"
       :page="page"
       :maxPage="maxPage"
-      v-if="resultsCount"
+      v-if="resultsCount && disableFilters !== true"
     />
     <slot></slot>
     <h4 v-if="!resultsCount">
@@ -39,6 +40,7 @@ export default class PreviewList extends Vue {
   @Prop() private readonly title!: string;
   @Prop() private readonly sortOptions!: string[];
   @Prop() private readonly resultsCount!: number;
+  @Prop() private readonly disableFilters!: boolean;
 
   private page: number = 1;
   private perPageOptions: number[] = Global.perPageOptions;

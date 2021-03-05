@@ -11,6 +11,7 @@ import SearchFilters from '@/components/SearchFilters/index.vue';
 import ResultsCounter from '@/components/ResultsCounter/index.vue';
 import PreviewSection from '@/components/PreviewSection/index.vue';
 import PreviewList from '@/components/PreviewList/index.vue';
+import ItemTile from '@/components/ItemTile/index.vue';
 
 Vue.config.productionTip = false;
 
@@ -34,6 +35,7 @@ Vue.component('SearchFilters', SearchFilters);
 Vue.component('ResultsCounter', ResultsCounter);
 Vue.component('PreviewSection', PreviewSection);
 Vue.component('PreviewList', PreviewList);
+Vue.component('ItemTile', ItemTile);
 
 new Vue({
   router,

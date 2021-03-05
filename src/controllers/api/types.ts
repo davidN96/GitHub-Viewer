@@ -18,6 +18,7 @@ export interface User {
   type: string;
   site_admin: boolean;
   score?: number;
+  contributions?: number;
 }
 
 export interface ExtendedUser extends User {
@@ -167,10 +168,6 @@ export interface FindItemResponse {
   total_count: number;
   incomplete_results: boolean;
   items: Repository[] | User[];
-}
-
-export interface Contributor extends User {
-  contributions: number;
 }
 
 export interface CommitParticipant {

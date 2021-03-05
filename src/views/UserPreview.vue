@@ -69,17 +69,16 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Watch } from 'vue-property-decorator';
 import PreviewSection from '@/components/PreviewSection/index.vue';
-import ItemTile from '@/components/ItemTile/index.vue';
 import API from '@/controllers/api';
 import * as APITypes from '@/controllers/api/types';
 import * as Global from '@/global';
 import * as Error from '@/utils/errors';
 
-@Component({ components: { ItemTile, PreviewSection } })
+@Component({ components: { PreviewSection } })
 export default class UserPreview extends Vue {
-  private isFetching: boolean = false;
+  private isFetching: boolean = true;
   private user: APITypes.ExtendedUser | null = null;
   private error: Global.AppError | null = null;
   private repositories: APITypes.Repository[] = [];
@@ -128,13 +127,22 @@ export default class UserPreview extends Vue {
     }
   }
 
-  async mounted(): Promise<void> {
+  private async loadData(): Promise<void> {
     this.isFetching = true;
     await this.loadUser();
     await this.loadRepos(Global.defaultRepoRequestParams);
     await this.loadFollowers(Global.defaultUserRequestParams);
     await this.loadFollowed(Global.defaultUserRequestParams);
     this.isFetching = false;
+  }
+
+  @Watch('$route.fullPath')
+  private async handleUserChange(): Promise<void> {
+    await this.loadData();
+  }
+
+  async mounted(): Promise<void> {
+    await this.loadData();
   }
 }
 </script>

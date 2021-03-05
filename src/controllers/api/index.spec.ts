@@ -98,7 +98,7 @@ describe.skip('getUserRepositories()', () => {
 
 describe.skip('getRepositoryContributors()', () => {
   it('Should get repo contributors', async () => {
-    const contributors: Types.Contributor[] = await GithubAPI.getRepositoryContributors(
+    const contributors: Types.User[] = await GithubAPI.getRepositoryContributors(
       defaultUser,
       defaultRepository
     );
