@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import * as Types from './types';
 
 const API: AxiosInstance = axios.create({
-  baseURL: 'http://api.github.com',
+  baseURL: 'https://api.github.com',
   timeout: 2000,
 });
 
