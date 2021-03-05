@@ -16,7 +16,6 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 export default class Paginator extends Vue {
   @Prop() readonly page!: number;
   @Prop() readonly maxPage!: number;
-  @Prop() readonly type!: string;
 
   private handleNextPage(): void {
     this.$emit('pageChange', this.page + 1);

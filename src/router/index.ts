@@ -25,6 +25,10 @@ export const routes: Array<RouteConfig> = [
     name: 'User',
     component: () => import('@/views/UserPreview.vue'),
   },
+  {
+    path: '*',
+    component: () => import('@/views/NotFound.vue'),
+  },
 ];
 
 const router = new VueRouter({
