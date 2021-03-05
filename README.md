@@ -1,29 +1,21 @@
-# github-viewer
+## GitHub Previewer
 
-## Project setup
-```
-npm install
-```
+---
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+#### Description
 
-### Compiles and minifies for production
-```
-npm run build
-```
+Project can be used to browse GitHub users and repositories.
 
-### Run your unit tests
-```
-npm run test:unit
-```
+---
 
-### Lints and fixes files
-```
-npm run lint
-```
+#### Used technologies
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+###### ✔ Vue
+
+###### ✔ Vuex as store
+
+###### ✔ SCSS preprocessor
+
+---
+
+###### Based on this [API](https://api.github.com)

@@ -29,6 +29,7 @@
             :title="'Repositories'"
             :sortOptions="repoSortOptions"
             :resultsCount="user.public_repos"
+            :disableButtons="repositoriesFetching"
             @changeData="loadRepos"
           >
             <ItemTile
@@ -41,6 +42,7 @@
           <PreviewList
             :title="'Followers'"
             :resultsCount="user.followers"
+            :disableButtons="followersFetching"
             @changeData="loadFollowers"
           >
             <ItemTile
@@ -53,6 +55,7 @@
           <PreviewList
             :title="'Followed'"
             :resultsCount="user.following"
+            :disableButtons="followedFetching"
             @changeData="loadFollowed"
           >
             <ItemTile
@@ -82,8 +85,11 @@ export default class UserPreview extends Vue {
   private user: APITypes.ExtendedUser | null = null;
   private error: Global.AppError | null = null;
   private repositories: APITypes.Repository[] = [];
+  private repositoriesFetching: boolean = false;
   private followers: APITypes.User[] = [];
+  private followersFetching: boolean = false;
   private followed: APITypes.User[] = [];
+  private followedFetching: boolean = false;
   private repoSortOptions: string[] = Global.userRepoSortOptions;
 
   private get username(): string {
@@ -102,28 +108,37 @@ export default class UserPreview extends Vue {
 
   private async loadRepos(params: APITypes.FindItemParams): Promise<void> {
     try {
+      this.repositoriesFetching = true;
       this.repositories = await API.getUserRepositories(this.username, params);
     } catch (error) {
       if (error?.status === 403) this.error = Error.LimitExceeded();
       else this.error = Error.UnexpectedError();
+    } finally {
+      this.repositoriesFetching = false;
     }
   }
 
   private async loadFollowers(params: APITypes.FindItemParams): Promise<void> {
     try {
+      this.followersFetching = true;
       this.followers = await API.getUserFollowers(this.username, params);
     } catch (error) {
       if (error?.status === 403) this.error = Error.LimitExceeded();
       else this.error = Error.UnexpectedError();
+    } finally {
+      this.followersFetching = false;
     }
   }
 
   private async loadFollowed(params: APITypes.FindItemParams): Promise<void> {
     try {
+      this.followedFetching = true;
       this.followed = await API.getFollowedByUser(this.username, params);
     } catch (error) {
       if (error?.status === 403) this.error = Error.LimitExceeded();
       else this.error = Error.UnexpectedError();
+    } finally {
+      this.followedFetching = false;
     }
   }
 

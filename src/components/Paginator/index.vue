@@ -1,9 +1,9 @@
 <template>
   <div class="paginatorWrapper">
-    <button @click="handlePrevPage" :disabled="page === 1">
+    <button @click="handlePrevPage" :disabled="page === 1 || disabled">
       <i class="fas fa-chevron-circle-left"></i>
     </button>
-    <button @click="handleNextPage" :disabled="page === maxPage">
+    <button @click="handleNextPage" :disabled="page === maxPage || disabled">
       <i class="fas fa-chevron-circle-right"></i>
     </button>
   </div>
@@ -16,6 +16,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 export default class Paginator extends Vue {
   @Prop() readonly page!: number;
   @Prop() readonly maxPage!: number;
+  @Prop() readonly disabled: boolean | null = null;
 
   private handleNextPage(): void {
     this.$emit('pageChange', this.page + 1);

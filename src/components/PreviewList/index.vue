@@ -24,6 +24,7 @@
       v-if="maxPage > 1"
       :page="page"
       :maxPage="maxPage"
+      :disabled="disableButtons"
       @pageChange="pageChange"
     />
   </PreviewSection>
@@ -41,6 +42,7 @@ export default class PreviewList extends Vue {
   @Prop() private readonly sortOptions!: string[];
   @Prop() private readonly resultsCount!: number;
   @Prop() private readonly disableFilters!: boolean;
+  @Prop() private readonly disableButtons: boolean | null = null;
 
   private page: number = 1;
   private perPageOptions: number[] = Global.perPageOptions;
