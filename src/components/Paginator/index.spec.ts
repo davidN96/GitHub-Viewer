@@ -9,6 +9,8 @@ describe('Paginator', () => {
 
   const wrapper = mount(Paginator, { propsData: props });
 
-  expect(wrapper.props().page).toBe(props.page);
-  expect(wrapper.props().maxPage).toBe(props.maxPage);
+  it('Should have valid props', () => {
+    expect(wrapper.props().page).toBe(props.page);
+    expect(wrapper.props().maxPage).toBe(props.maxPage);
+  });
 });

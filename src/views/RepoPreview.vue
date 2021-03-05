@@ -42,9 +42,37 @@
             :type="'user'"
             :item="contributor"
           />
+          <div class="pagination">
+            <button
+              :disabled="contributorsPage === 1 || contributorsFetching"
+              @click="contributorsPage--"
+            >
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button
+              :disabled="contributorsEnd || contributorsFetching"
+              @click="contributorsPage++"
+            >
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
         </PreviewList>
         <PreviewSection :title="'Commits'">
           <Commit v-for="commit of commits" :data="commit" :key="commit.sha" />
+          <div class="pagination">
+            <button
+              :disabled="commitsPage === 1 || commitsFetching"
+              @click="commitsPage--"
+            >
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button
+              :disabled="commitsEnd || commitsFetching"
+              @click="commitsPage++"
+            >
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
         </PreviewSection>
       </main>
     </div>
@@ -52,7 +80,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Watch } from 'vue-property-decorator';
 import * as APITypes from '@/controllers/api/types';
 import * as Global from '@/global';
 import * as Error from '@/utils/errors';
@@ -66,6 +94,12 @@ export default class RepoPreview extends Vue {
   private repository: APITypes.ExtendedRepository | null = null;
   private contributors: APITypes.User[] = [];
   private commits: APITypes.Commit[] = [];
+  private commitsPage: number = 1;
+  private commitsPerPage: number = 10;
+  private commitsFetching: boolean = false;
+  private contributorsPage: number = 1;
+  private contributorsPerPage: number = 10;
+  private contributorsFetching: boolean = false;
   private error: Global.AppError | null = null;
 
   private get owner(): string {
@@ -74,6 +108,14 @@ export default class RepoPreview extends Vue {
 
   private get name(): string {
     return this.$route.params.name;
+  }
+
+  private get commitsEnd(): boolean {
+    return this.commits.length < this.commitsPerPage;
+  }
+
+  private get contributorsEnd(): boolean {
+    return this.contributors.length < this.contributorsPerPage;
   }
 
   private async loadRepository(): Promise<void> {
@@ -88,23 +130,43 @@ export default class RepoPreview extends Vue {
 
   private async loadContributors(): Promise<void> {
     try {
+      this.contributorsFetching = true;
       this.contributors = await API.getRepositoryContributors(
         this.owner,
-        this.name
+        this.name,
+        { page: this.contributorsPage, perPage: this.contributorsPerPage }
       );
     } catch (error) {
       if (error?.status === 403) this.error = Error.LimitExceeded();
       else this.error = Error.UnexpectedError();
+    } finally {
+      this.contributorsFetching = false;
     }
   }
 
   private async loadCommits(): Promise<void> {
     try {
-      this.commits = await API.getRepositoryCommits(this.owner, this.name);
+      this.commitsFetching = true;
+      this.commits = await API.getRepositoryCommits(this.owner, this.name, {
+        perPage: this.commitsPerPage,
+        page: this.commitsPage,
+      });
     } catch (error) {
       if (error?.status === 403) this.error = Error.LimitExceeded();
       else this.error = Error.UnexpectedError();
+    } finally {
+      this.commitsFetching = false;
     }
+  }
+
+  @Watch('commitsPage')
+  private async handleCommitsPageChange(): Promise<void> {
+    await this.loadCommits();
+  }
+
+  @Watch('contributorsPage')
+  private async handleContributorsPageChange(): Promise<void> {
+    await this.loadContributors();
   }
 
   async mounted(): Promise<void> {
@@ -166,6 +228,49 @@ export default class RepoPreview extends Vue {
     .description {
       color: $hoverGray;
       margin-bottom: 3vh;
+    }
+  }
+}
+
+.pagination {
+  display: flex;
+  width: 100%;
+  padding: 2vh 2vh;
+  justify-content: center;
+
+  button {
+    background-color: $cardBackground;
+    outline: none;
+    border: none;
+    border-radius: 50%;
+    height: 35px;
+    width: 35px;
+    margin: 0 2vw;
+    transition: 0.2s;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.6;
+    }
+
+    &:disabled:hover {
+      transform: scale(1);
+      i {
+        color: $green;
+      }
+    }
+
+    &:hover {
+      transform: scale(1.2);
+
+      i {
+        color: $hoverGreen;
+      }
+    }
+
+    i {
+      font-size: 1.2rem;
+      color: $green;
     }
   }
 }

@@ -100,7 +100,8 @@ describe.skip('getRepositoryContributors()', () => {
   it('Should get repo contributors', async () => {
     const contributors: Types.User[] = await GithubAPI.getRepositoryContributors(
       defaultUser,
-      defaultRepository
+      defaultRepository,
+      { perPage: 10, page: 1 }
     );
 
     expect(contributors.length).toBeGreaterThan(0);
@@ -143,7 +144,8 @@ describe.skip('getRepositoryCommits()', () => {
   it('Should return list of repo commits', async () => {
     const commits: Types.Commit[] = await GithubAPI.getRepositoryCommits(
       defaultUser,
-      defaultRepository
+      defaultRepository,
+      { perPage: 10, page: 1 }
     );
 
     expect(commits.length).toBeGreaterThan(2);

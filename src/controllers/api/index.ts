@@ -82,13 +82,15 @@ export default class GithubAPI {
 
   static async getRepositoryContributors(
     owner: string,
-    repository: string
+    repository: string,
+    params: Types.FindItemParams
   ): Promise<Types.User[]> {
     owner = encodeURIComponent(owner);
     repository = encodeURIComponent(repository);
 
     const response: AxiosResponse<Types.User[]> = await API.get(
-      `/repos/${owner}/${repository}/contributors`
+      `/repos/${owner}/${repository}/contributors`,
+      { params: { ...params, per_page: params.perPage } }
     );
 
     return response.data;
@@ -136,13 +138,15 @@ export default class GithubAPI {
 
   static async getRepositoryCommits(
     username: string,
-    repository: string
+    repository: string,
+    params: Types.FindItemParams
   ): Promise<Types.Commit[]> {
     username = encodeURIComponent(username);
     repository = encodeURIComponent(repository);
 
     const response: AxiosResponse<Types.Commit[]> = await API.get(
-      `/repos/${username}/${repository}/commits`
+      `/repos/${username}/${repository}/commits`,
+      { params: { ...params, per_page: params.perPage } }
     );
 
     return response.data;
