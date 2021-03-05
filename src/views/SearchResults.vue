@@ -84,7 +84,9 @@ export default class SearchResult extends Vue {
 
   private searchFilters: SearchTypes.ExtendedSearchFilters = {
     perPage: SearchTypes.perPageOptions[0],
-    sort: this.searchFilterControl.sortOptions[0],
+    sort: this.searchFilterControl.sortOptions?.length
+      ? this.searchFilterControl.sortOptions[0]
+      : null,
     order: APITypes.Order.desc,
   };
 
@@ -124,20 +126,20 @@ export default class SearchResult extends Vue {
     };
   }
 
-  private async searchUser(): Promise<APITypes.FindUserResponse> {
-    const params: APITypes.FindUserFullParams = {
+  private async searchUser(): Promise<APITypes.FindItemResponse> {
+    const params: APITypes.FindItemFullParams = {
       q: this.keyword,
       page: this.searchPageControl.page,
       ...this.searchFilters,
     };
 
-    const data: APITypes.FindUserResponse = await API.findUser(params);
+    const data: APITypes.FindItemResponse = await API.findUser(params);
 
     return data;
   }
 
-  private async searchRepository(): Promise<APITypes.FindRepositoryResponse> {
-    const params: APITypes.FindRepositoryFullParams = {
+  private async searchRepository(): Promise<APITypes.FindItemResponse> {
+    const params: APITypes.FindItemFullParams = {
       q: this.keyword,
       page: this.searchPageControl.page,
       ...this.searchFilters,

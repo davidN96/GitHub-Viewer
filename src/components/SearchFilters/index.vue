@@ -12,7 +12,7 @@
           >
         </select>
       </div>
-      <div v-if="sortOptions.length">
+      <div v-if="sortOptions">
         <label for="sort">Sort by:</label>
         <select id="sort" v-model="currentSort">
           <option
@@ -40,10 +40,10 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
+import * as Global from '@/global';
 
 @Component
 export default class SearchFilter extends Vue {
-  @Prop() private readonly perPageOptions!: number[];
   @Prop() private readonly sortOptions!: string[];
   @Prop() private readonly orderOptions!: string[];
   @Prop() private sort!: string;
@@ -53,6 +53,7 @@ export default class SearchFilter extends Vue {
   private currentSort: string = this.sort;
   private currentOrder: string = this.order;
   private currentPerPage: number = this.perPage;
+  private perPageOptions: number[] = Global.perPageOptions;
 
   @Watch('currentPerPage')
   @Watch('currentOrder')

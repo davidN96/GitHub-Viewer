@@ -25,8 +25,8 @@ export interface SearchFilters {
 }
 
 export interface ExtendedSearchFilters extends SearchFilters {
-  sort: string;
-  order: string;
+  sort: string | null;
+  order: string | null;
 }
 
 export interface SearchFilterControl {
@@ -38,11 +38,18 @@ export interface ExtendedSearchFilterControl extends SearchFilterControl {
   orderOptions: string[];
 }
 
+export interface ListFilterParams {
+  page: number;
+  perPage: number;
+  sort?: string;
+  order?: string;
+}
+
 export interface AppError {
   isActive: boolean;
   title: string;
   message: string;
-  redirection: string | null;
+  redirection?: string;
 }
 
 export const perPageOptions: number[] = [10, 20, 30, 40, 50];
@@ -67,3 +74,15 @@ export const userRepoSortOptions: string[] = [
 ];
 
 export const orderOptions: string[] = [APITypes.Order.asc, APITypes.Order.desc];
+
+export const defaultUserRequestParams: APITypes.FindItemParams = {
+  page: 1,
+  perPage: perPageOptions[0],
+};
+
+export const defaultRepoRequestParams: APITypes.FindItemParams = {
+  page: 1,
+  perPage: perPageOptions[0],
+  sort: userRepoSortOptions[0],
+  order: orderOptions[0],
+};

@@ -40,7 +40,6 @@ export default class PreviewSection extends Vue {
   .container {
     display: flex;
     flex-wrap: wrap;
-    transition: 0.5s;
     overflow: hidden;
 
     h4 {

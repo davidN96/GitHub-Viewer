@@ -48,23 +48,6 @@ export enum Order {
   asc = 'asc',
 }
 
-export interface FindUserResponse {
-  total_count: number;
-  incomplete_results: boolean;
-  items: User[];
-}
-
-export interface FindUserParams {
-  perPage: number;
-  page: number;
-  sort?: string;
-  order?: string;
-}
-
-export interface FindUserFullParams extends FindUserParams {
-  q: string;
-}
-
 export interface License {
   key: string;
   name: string;
@@ -168,22 +151,22 @@ export enum UserRepoSortQuery {
   full_name = 'full_name',
 }
 
-export interface FindRepositoryParams {
+export interface FindItemParams {
   perPage: number;
   page: number;
-  sort: string;
-  order?: string;
+  sort?: string | null;
+  order?: string | null;
   direction?: string;
 }
 
-export interface FindRepositoryFullParams extends FindRepositoryParams {
+export interface FindItemFullParams extends FindItemParams {
   q: string;
 }
 
-export interface FindRepositoryResponse {
+export interface FindItemResponse {
   total_count: number;
   incomplete_results: boolean;
-  items: Repository[];
+  items: Repository[] | User[];
 }
 
 export interface Contributor extends User {

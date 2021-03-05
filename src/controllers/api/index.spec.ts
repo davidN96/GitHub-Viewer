@@ -8,13 +8,13 @@ import * as Types from './types';
 
 const defaultUser: string = 'davidN96';
 const defaultRepository: string = 'GitHub-Viewer';
-const userRequestParams: Types.FindUserParams = {
+const userRequestParams: Types.FindItemParams = {
   perPage: 5,
   page: 1,
   sort: Types.UserSortQuery.followers,
   order: Types.Order.asc,
 };
-const repoRequestParams: Types.FindRepositoryParams = {
+const repoRequestParams: Types.FindItemParams = {
   perPage: 5,
   page: 1,
   sort: Types.RepositorySortQuery.stars,
@@ -40,7 +40,7 @@ describe.skip('getUser()', () => {
 
 describe.skip('findUser()', () => {
   it('Should find users with query', async () => {
-    const params: Types.FindUserFullParams = {
+    const params: Types.FindItemFullParams = {
       q: 'david',
       perPage: 5,
       page: 1,
@@ -48,7 +48,7 @@ describe.skip('findUser()', () => {
       order: Types.Order.asc,
     };
 
-    const searchResult: Types.FindUserResponse = await GithubAPI.findUser(
+    const searchResult: Types.FindItemResponse = await GithubAPI.findUser(
       params
     );
 
@@ -69,7 +69,7 @@ describe.skip('getRepository()', () => {
 
 describe.skip('findRepository()', () => {
   it('Should find repository with query', async () => {
-    const params: Types.FindRepositoryFullParams = {
+    const params: Types.FindItemFullParams = {
       q: 'GitHub',
       perPage: 5,
       page: 1,
@@ -77,7 +77,7 @@ describe.skip('findRepository()', () => {
       order: Types.Order.asc,
     };
 
-    const searchResult: Types.FindRepositoryResponse = await GithubAPI.findRepository(
+    const searchResult: Types.FindItemResponse = await GithubAPI.findRepository(
       params
     );
 

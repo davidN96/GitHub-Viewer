@@ -2,17 +2,22 @@
   <PreviewSection :title="title">
     <SearchFilters
       :perPage="filters.perPage"
-      :perPageOptions="Search.perPageOptions"
       :order="filters.order"
       :orderOptions="orderOptions"
       :sort="filters.sort"
       :sortOptions="sortOptions"
       @filtersChange="filtersChange"
+      v-if="resultsCount"
     />
-    <ResultsCounter :results="resultsCount" :page="page" :maxPage="maxPage" />
+    <ResultsCounter
+      :results="resultsCount"
+      :page="page"
+      :maxPage="maxPage"
+      v-if="resultsCount"
+    />
     <slot></slot>
     <h4 v-if="!resultsCount">
-      No repositories found
+      {{ `No results found` }}
     </h4>
     <Paginator
       v-if="maxPage > 1"
@@ -25,30 +30,33 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
-import * as SearchTypes from '@/global';
+import * as Global from '@/global';
 import * as SearchUtils from '@/utils/search';
 import * as APITypes from '@/controllers/api/types';
 
 @Component
 export default class PreviewList extends Vue {
   @Prop() private readonly title!: string;
-  @Prop() private readonly orderOptions!: string[];
   @Prop() private readonly sortOptions!: string[];
   @Prop() private readonly resultsCount!: number;
 
   private page: number = 1;
+  private perPageOptions: number[] = Global.perPageOptions;
+  private orderOptions: string[] = this.sortOptions?.length
+    ? Global.orderOptions
+    : [];
 
   private get maxPage(): number {
     return SearchUtils.countPages(this.resultsCount, this.filters.perPage);
   }
 
-  private filters: SearchTypes.ExtendedSearchFilters = {
-    sort: this.sortOptions[0],
+  private filters: Global.ExtendedSearchFilters = {
+    sort: this.sortOptions?.length ? this.sortOptions[0] : null,
     order: APITypes.Order.desc,
-    perPage: SearchTypes.perPageOptions[0],
+    perPage: Global.perPageOptions[0],
   };
 
-  private filtersChange(value: SearchTypes.ExtendedSearchFilters): void {
+  private filtersChange(value: Global.ExtendedSearchFilters): void {
     this.filters = value;
   }
 
@@ -69,4 +77,10 @@ export default class PreviewList extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+h4 {
+  padding: 3vh 2vw;
+  width: 100%;
+  text-align: center;
+}
+</style>

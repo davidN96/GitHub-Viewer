@@ -21,13 +21,13 @@ export default class GithubAPI {
   }
 
   static async findUser(
-    params: Types.FindUserFullParams
-  ): Promise<Types.FindUserResponse> {
+    params: Types.FindItemFullParams
+  ): Promise<Types.FindItemResponse> {
     params.q = encodeURIComponent(params.q);
 
-    const searchResponse: AxiosResponse<Types.FindUserResponse> = await API.get(
+    const searchResponse: AxiosResponse<Types.FindItemResponse> = await API.get(
       `/search/users`,
-      { params }
+      { params: { ...params, per_page: params.perPage } }
     );
 
     return searchResponse.data;
@@ -48,11 +48,11 @@ export default class GithubAPI {
   }
 
   static async findRepository(
-    params: Types.FindRepositoryFullParams
-  ): Promise<Types.FindRepositoryResponse> {
+    params: Types.FindItemFullParams
+  ): Promise<Types.FindItemResponse> {
     params.q = encodeURIComponent(params.q);
 
-    const searchReponse: AxiosResponse<Types.FindRepositoryResponse> = await API.get(
+    const searchReponse: AxiosResponse<Types.FindItemResponse> = await API.get(
       '/search/repositories',
       { params }
     );
@@ -62,13 +62,19 @@ export default class GithubAPI {
 
   static async getUserRepositories(
     username: string,
-    params: Types.FindRepositoryParams
+    params: Types.FindItemParams
   ): Promise<Types.Repository[]> {
     username = encodeURIComponent(username);
 
     const response: AxiosResponse<Types.Repository[]> = await API.get(
       `/users/${username}/repos`,
-      { params }
+      {
+        params: {
+          ...params,
+          per_page: params.perPage,
+          direction: params.order,
+        },
+      }
     );
 
     return response.data;
@@ -102,13 +108,13 @@ export default class GithubAPI {
 
   static async getUserFollowers(
     username: string,
-    params: Types.FindUserParams
+    params: Types.FindItemParams
   ): Promise<Types.User[]> {
     username = encodeURIComponent(username);
 
     const response: AxiosResponse<Types.User[]> = await API.get(
       `/users/${username}/followers`,
-      { params }
+      { params: { ...params, per_page: params.perPage } }
     );
 
     return response.data;
@@ -116,13 +122,13 @@ export default class GithubAPI {
 
   static async getFollowedByUser(
     username: string,
-    params: Types.FindUserParams
+    params: Types.FindItemParams
   ): Promise<Types.User[]> {
     username = encodeURIComponent(username);
 
     const response: AxiosResponse<Types.User[]> = await API.get(
       `/users/${username}/following`,
-      { params }
+      { params: { ...params, per_page: params.perPage } }
     );
 
     return response.data;
