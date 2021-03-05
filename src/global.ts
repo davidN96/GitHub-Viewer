@@ -11,10 +11,6 @@ export interface SearchResults {
   isFetching: boolean;
 }
 
-export interface GetUserResult {
-  data: APITypes.ExtendedUser | undefined;
-}
-
 export interface SearchPageControl {
   page: number;
   maxPage: number;
@@ -36,13 +32,6 @@ export interface SearchFilterControl {
 export interface ExtendedSearchFilterControl extends SearchFilterControl {
   sortOptions: string[];
   orderOptions: string[];
-}
-
-export interface ListFilterParams {
-  page: number;
-  perPage: number;
-  sort?: string;
-  order?: string;
 }
 
 export interface AppError {
